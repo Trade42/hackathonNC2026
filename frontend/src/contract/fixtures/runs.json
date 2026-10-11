@@ -1,0 +1,38 @@
+[
+  {
+    "id": "run_demo",
+    "restaurant": {
+      "id": "rst_cosmic",
+      "name": "Cosmic Cantina",
+      "area_id": "area_franklin",
+      "cuisine": [
+        "mexican"
+      ],
+      "location": {
+        "lat": 35.913211,
+        "lng": -79.055094
+      },
+      "address": "118 E Franklin St, Chapel Hill, NC 27514",
+      "is_open": true,
+      "hours_today": "11:00–04:00",
+      "partner": false,
+      "price_level": 1,
+      "walk_minutes_from_dropoff": null,
+      "image_url": null
+    },
+    "runner": {
+      "id": "usr_maya",
+      "display_name": "Maya",
+      "avatar_seed": "maya",
+      "bubble_color": "#F97316"
+    },
+    "circle_id": "cir_hinton4",
+    "status": "open",
+    "leaving_at": "2026-10-10T22:00:00Z",
+    "window_closes_at": "2026-10-10T22:10:00Z",
+    "order_count": 0,
+    "created_via": "message",
+    "runner_location": null,
+    "eta_minutes": null
+  }
+]

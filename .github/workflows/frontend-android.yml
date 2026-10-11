@@ -1,0 +1,72 @@
+# Builds the Ferry Android app (Capacitor) and publishes ferry.apk on the
+# "android-latest" release. The website serves the same APK at
+# /downloads/ferry.apk (the repo is private, so release assets need a login).
+name: frontend-android
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/frontend-android.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: frontend-android
+  cancel-in-progress: true
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      # ubuntu-latest ships the Android SDK (ANDROID_HOME); Gradle fetches any
+      # missing platform or build tools itself.
+      - name: Install
+        run: npm ci
+
+      - name: Build the web app
+        run: npm run build
+
+      - name: Copy it into the Android project
+        run: npx cap sync android
+
+      - name: Build the APK
+        working-directory: frontend/android
+        run: ./gradlew assembleDebug --no-daemon
+
+      - name: Name it
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk ferry.apk
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ferry-apk
+          path: frontend/ferry.apk
+
+      - name: Publish to the android-latest release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: android-latest
+          name: Ferry for Android (latest build)
+          body: Debug build of the Capacitor app from ${{ github.sha }}. Install ferry.apk on Android 7 or later.
+          files: frontend/ferry.apk
+          make_latest: true

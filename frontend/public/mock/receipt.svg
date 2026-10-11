@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 420" font-family="Courier New, monospace" fill="#2a2a2a">
+  <rect width="300" height="420" fill="#d9cfc0"/>
+  <path d="M40 20 h220 v370 l-14 10 -14 -10 -14 10 -14 -10 -14 10 -14 -10 -14 10 -14 -10 -14 10 -14 -10 -14 10 -14 -10 -14 10 -14 -10 -14 10 -14 -10 Z" fill="#fbf9f4" transform="rotate(-2 150 210)"/>
+  <g transform="rotate(-2 150 210)" font-size="13">
+    <text x="150" y="56" text-anchor="middle" font-size="16" font-weight="700">COSMIC CANTINA</text>
+    <text x="150" y="74" text-anchor="middle">128 E Franklin St</text>
+    <text x="150" y="90" text-anchor="middle">Chapel Hill NC</text>
+    <text x="60" y="124">1 Chicken burrito</text><text x="240" y="124" text-anchor="end">8.99</text>
+    <text x="60" y="142">  Medium salsa</text>
+    <text x="60" y="162">1 Veggie burrito</text><text x="240" y="162" text-anchor="end">7.99</text>
+    <text x="60" y="180">  Guacamole</text><text x="240" y="180" text-anchor="end">1.50</text>
+    <text x="60" y="214">SUBTOTAL</text><text x="240" y="214" text-anchor="end">18.48</text>
+    <text x="60" y="232">TAX 7.5%</text><text x="240" y="232" text-anchor="end">1.39</text>
+    <text x="60" y="258" font-weight="700">TOTAL</text><text x="240" y="258" text-anchor="end" font-weight="700">19.27</text>
+    <text x="60" y="292">FERRY CARD ****4417</text>
+    <text x="150" y="340" text-anchor="middle">Thank you!</text>
+  </g>
+</svg>

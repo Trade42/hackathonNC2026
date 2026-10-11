@@ -1,0 +1,52 @@
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--r-inner);
+  background: rgba(191, 230, 250, 0.55);
+}
+
+.skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.7), transparent);
+  animation: shimmer 1.4s var(--ease-out) infinite;
+}
+
+.state {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-3);
+  padding: var(--space-6) var(--space-4);
+  text-align: center;
+}
+
+.state p {
+  max-width: 34ch;
+}
+
+.error {
+  composes: state;
+}
+
+.errorIcon {
+  color: var(--danger);
+}
+
+.offline {
+  position: fixed;
+  left: 50%;
+  top: calc(var(--safe-top) + 8px);
+  z-index: var(--z-banner);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: var(--r-pill);
+  background: var(--panel-solid);
+  color: var(--ink);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  box-shadow: var(--shadow-lift);
+  translate: -50% 0;
+}

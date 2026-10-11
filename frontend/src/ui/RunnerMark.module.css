@@ -1,0 +1,167 @@
+.mark {
+  display: block;
+  flex: none;
+  overflow: visible;
+  filter: drop-shadow(0 2px 4px rgba(10, 70, 120, 0.25));
+}
+
+.legA,
+.legB,
+.shinA,
+.shinB,
+.armA,
+.armB,
+.bob,
+.speed line {
+  transform-box: view-box;
+}
+.legA,
+.legB {
+  transform-origin: 48px 57px;
+}
+.shinA,
+.shinB {
+  transform-origin: 46px 72px;
+}
+.armA,
+.armB {
+  transform-origin: 54px 37px;
+}
+
+/* the held pose: mid-stride */
+.legA {
+  transform: rotate(30deg);
+}
+.legB {
+  transform: rotate(-26deg);
+}
+.shinA {
+  transform: rotate(-10deg);
+}
+.shinB {
+  transform: rotate(-62deg);
+}
+.armA {
+  transform: rotate(38deg);
+}
+.armB {
+  transform: rotate(-34deg);
+}
+
+/* the run cycle: legs and arms swing opposite, the body bobs twice a stride */
+.loop .legA,
+.once .legA {
+  animation: leg 0.62s ease-in-out infinite alternate;
+}
+.loop .legB,
+.once .legB {
+  animation: leg 0.62s ease-in-out infinite alternate-reverse;
+}
+.loop .shinA,
+.once .shinA {
+  animation: shin 0.62s ease-in-out infinite alternate;
+}
+.loop .shinB,
+.once .shinB {
+  animation: shin 0.62s ease-in-out infinite alternate-reverse;
+}
+.loop .armA,
+.once .armA {
+  animation: arm 0.62s ease-in-out infinite alternate-reverse;
+}
+.loop .armB,
+.once .armB {
+  animation: arm 0.62s ease-in-out infinite alternate;
+}
+.loop .bob,
+.once .bob {
+  animation: bob 0.31s ease-in-out infinite alternate;
+}
+.loop .speed line,
+.once .speed line {
+  animation: speed 0.62s linear infinite;
+}
+.speed line:nth-child(2) {
+  animation-delay: -0.2s !important;
+}
+.speed line:nth-child(3) {
+  animation-delay: -0.4s !important;
+}
+
+/* "once": three strides on load, then again while hovered */
+.once .legA,
+.once .legB,
+.once .shinA,
+.once .shinB,
+.once .armA,
+.once .armB {
+  animation-iteration-count: 6;
+}
+.once .bob,
+.once .speed line {
+  animation-iteration-count: 12;
+}
+:where(a, button):hover > .once *,
+:where(a, button):hover .once *,
+.once:hover * {
+  animation-iteration-count: infinite;
+}
+
+@keyframes leg {
+  from {
+    transform: rotate(38deg);
+  }
+  to {
+    transform: rotate(-32deg);
+  }
+}
+@keyframes shin {
+  from {
+    transform: rotate(-8deg);
+  }
+  to {
+    transform: rotate(-70deg);
+  }
+}
+@keyframes arm {
+  from {
+    transform: rotate(-40deg);
+  }
+  to {
+    transform: rotate(45deg);
+  }
+}
+@keyframes bob {
+  from {
+    transform: translateY(1.5px);
+  }
+  to {
+    transform: translateY(-1.5px);
+  }
+}
+@keyframes speed {
+  from {
+    transform: translateX(6px);
+    opacity: 0;
+  }
+  40% {
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-10px);
+    opacity: 0;
+  }
+}
+
+.still .speed {
+  opacity: 0.55;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mark * {
+    animation: none !important;
+  }
+}
+:global(html[data-motion='reduced']) .mark * {
+  animation: none !important;
+}

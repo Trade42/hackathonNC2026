@@ -1,0 +1,143 @@
+[
+  {
+    "id": "rst_cosmic",
+    "name": "Cosmic Cantina",
+    "area_id": "area_franklin",
+    "cuisine": [
+      "mexican"
+    ],
+    "location": {
+      "lat": 35.913211,
+      "lng": -79.055094
+    },
+    "address": "118 E Franklin St, Chapel Hill, NC 27514",
+    "is_open": true,
+    "hours_today": "11:00–04:00",
+    "partner": false,
+    "price_level": 1,
+    "walk_minutes_from_dropoff": null,
+    "image_url": null
+  },
+  {
+    "id": "rst_supdogs",
+    "name": "Sup Dogs",
+    "area_id": "area_franklin",
+    "cuisine": [
+      "american",
+      "hot dogs",
+      "burgers"
+    ],
+    "location": {
+      "lat": 35.913597,
+      "lng": -79.05552
+    },
+    "address": "107 E Franklin St, Chapel Hill, NC 27514",
+    "is_open": true,
+    "hours_today": "11:00–03:00",
+    "partner": false,
+    "price_level": 1,
+    "walk_minutes_from_dropoff": null,
+    "image_url": null
+  },
+  {
+    "id": "rst_limebasil",
+    "name": "Lime & Basil",
+    "area_id": "area_franklin",
+    "cuisine": [
+      "vietnamese"
+    ],
+    "location": {
+      "lat": 35.912338,
+      "lng": -79.058525
+    },
+    "address": "200 W Franklin St, Chapel Hill, NC 27516",
+    "is_open": true,
+    "hours_today": "11:00–21:00",
+    "partner": false,
+    "price_level": 2,
+    "walk_minutes_from_dropoff": null,
+    "image_url": null
+  },
+  {
+    "id": "rst_meddeli",
+    "name": "Mediterranean Deli",
+    "area_id": "area_franklin",
+    "cuisine": [
+      "mediterranean",
+      "middle eastern"
+    ],
+    "location": {
+      "lat": 35.911315,
+      "lng": -79.060981
+    },
+    "address": "410 W Franklin St, Chapel Hill, NC 27516",
+    "is_open": true,
+    "hours_today": "11:00–22:00",
+    "partner": false,
+    "price_level": 2,
+    "walk_minutes_from_dropoff": null,
+    "image_url": null
+  },
+  {
+    "id": "rst_insomnia",
+    "name": "Insomnia Cookies",
+    "area_id": "area_franklin",
+    "cuisine": [
+      "dessert",
+      "cookies"
+    ],
+    "location": {
+      "lat": 35.913892,
+      "lng": -79.054304
+    },
+    "address": "145 E Franklin St, Chapel Hill, NC 27514",
+    "is_open": true,
+    "hours_today": "11:00–03:00",
+    "partner": false,
+    "price_level": 1,
+    "walk_minutes_from_dropoff": null,
+    "image_url": null
+  },
+  {
+    "id": "rst_alpine",
+    "name": "Alpine Bagel Cafe",
+    "area_id": "area_campus",
+    "cuisine": [
+      "bagels",
+      "breakfast",
+      "coffee"
+    ],
+    "location": {
+      "lat": 35.910387,
+      "lng": -79.047477
+    },
+    "address": "Frank Porter Graham Student Union, 209 South Rd, Chapel Hill, NC 27514",
+    "is_open": true,
+    "hours_today": "09:00–15:00",
+    "partner": false,
+    "price_level": 1,
+    "walk_minutes_from_dropoff": null,
+    "image_url": null
+  },
+  {
+    "id": "rst_weaver",
+    "name": "Weaver Street Market",
+    "area_id": "area_carrboro",
+    "cuisine": [
+      "grocery",
+      "deli",
+      "hot bar"
+    ],
+    "location": {
+      "lat": 35.911148,
+      "lng": -79.071365
+    },
+    "address": "101 E Weaver St, Carrboro, NC 27510",
+    "is_open": true,
+    "hours_today": "07:00–22:00",
+    "partner": false,
+    "price_level": 2,
+    "walk_minutes_from_dropoff": null,
+    "image_url": null
+  }
+]

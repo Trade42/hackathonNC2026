@@ -1,0 +1,21 @@
+{
+  "name": "ferry-messaging",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Ferry's Photon Spectrum sidecar: forwards Telegram (and optionally iMessage) messages to ferry-core and sends its replies.",
+  "type": "module",
+  "scripts": {
+    "start": "bun --no-env-file run src/index.ts",
+    "test": "bun --no-env-file test",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@photon-ai/telegram-ts": "10.0.0",
+    "spectrum-ts": "12.10.1"
+  },
+  "devDependencies": {
+    "@photon-ai/proto": "0.2.4",
+    "@types/bun": "1.4.2",
+    "typescript": "6.0.3"
+  }
+}

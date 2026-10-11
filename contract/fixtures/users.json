@@ -1,0 +1,209 @@
+[
+  {
+    "id": "usr_judge",
+    "display_name": "Jordan",
+    "avatar_seed": "judge",
+    "bubble_color": "#2563EB",
+    "phone_masked": "+1 ••• ••• 0101",
+    "telegram_username": null,
+    "profile": {
+      "dropoff_default": {
+        "id": "place_fetzer",
+        "label": "Fetzer Gym (HackNC)",
+        "location": {
+          "lat": 35.909152,
+          "lng": -79.046905
+        },
+        "note": "HackNC venue."
+      },
+      "diet": [],
+      "avoid": [],
+      "favorite_cuisines": [
+        "mexican",
+        "american"
+      ],
+      "favorite_restaurant_ids": [
+        "rst_cosmic"
+      ],
+      "usual_times": [
+        {
+          "label": "Hackathon dinner",
+          "days": [
+            "sat"
+          ],
+          "start": "18:00",
+          "end": "20:00"
+        }
+      ],
+      "walking_pace": "normal",
+      "runner_opt_in": false,
+      "default_tip_cents": 200,
+      "notify_push": true,
+      "notify_messages": true,
+      "share_location_when_running": false
+    },
+    "onboarding_complete": true
+  },
+  {
+    "id": "usr_maya",
+    "display_name": "Maya",
+    "avatar_seed": "maya",
+    "bubble_color": "#F97316",
+    "phone_masked": "+1 ••• ••• 0102",
+    "telegram_username": null,
+    "profile": {
+      "dropoff_default": {
+        "id": "place_hinton",
+        "label": "Hinton James lobby",
+        "location": {
+          "lat": 35.902364,
+          "lng": -79.043231
+        },
+        "note": "Main lobby."
+      },
+      "diet": [],
+      "avoid": [
+        "peanuts"
+      ],
+      "favorite_cuisines": [
+        "mexican",
+        "vietnamese"
+      ],
+      "favorite_restaurant_ids": [
+        "rst_cosmic",
+        "rst_limebasil"
+      ],
+      "usual_times": [
+        {
+          "label": "Dinner run",
+          "days": [
+            "mon",
+            "tue",
+            "wed",
+            "thu",
+            "fri"
+          ],
+          "start": "17:30",
+          "end": "19:00"
+        },
+        {
+          "label": "Late night",
+          "days": [
+            "fri",
+            "sat"
+          ],
+          "start": "22:00",
+          "end": "23:59"
+        }
+      ],
+      "walking_pace": "brisk",
+      "runner_opt_in": true,
+      "default_tip_cents": 150,
+      "notify_push": true,
+      "notify_messages": true,
+      "share_location_when_running": true
+    },
+    "onboarding_complete": true
+  },
+  {
+    "id": "usr_dana",
+    "display_name": "Dana",
+    "avatar_seed": "dana",
+    "bubble_color": "#10B981",
+    "phone_masked": "+1 ••• ••• 0103",
+    "telegram_username": null,
+    "profile": {
+      "dropoff_default": {
+        "id": "place_hinton",
+        "label": "Hinton James lobby",
+        "location": {
+          "lat": 35.902364,
+          "lng": -79.043231
+        },
+        "note": "Main lobby."
+      },
+      "diet": [
+        "vegetarian"
+      ],
+      "avoid": [],
+      "favorite_cuisines": [
+        "mediterranean",
+        "vietnamese"
+      ],
+      "favorite_restaurant_ids": [
+        "rst_meddeli",
+        "rst_insomnia"
+      ],
+      "usual_times": [
+        {
+          "label": "Lunch",
+          "days": [
+            "mon",
+            "tue",
+            "wed",
+            "thu",
+            "fri"
+          ],
+          "start": "12:00",
+          "end": "13:00"
+        }
+      ],
+      "walking_pace": "normal",
+      "runner_opt_in": true,
+      "default_tip_cents": 200,
+      "notify_push": true,
+      "notify_messages": true,
+      "share_location_when_running": true
+    },
+    "onboarding_complete": true
+  },
+  {
+    "id": "usr_leo",
+    "display_name": "Leo",
+    "avatar_seed": "leo",
+    "bubble_color": "#8B5CF6",
+    "phone_masked": "+1 ••• ••• 0104",
+    "telegram_username": null,
+    "profile": {
+      "dropoff_default": {
+        "id": "place_hinton",
+        "label": "Hinton James lobby",
+        "location": {
+          "lat": 35.902364,
+          "lng": -79.043231
+        },
+        "note": "Main lobby."
+      },
+      "diet": [],
+      "avoid": [
+        "pork"
+      ],
+      "favorite_cuisines": [
+        "american",
+        "bagels"
+      ],
+      "favorite_restaurant_ids": [
+        "rst_supdogs",
+        "rst_alpine"
+      ],
+      "usual_times": [
+        {
+          "label": "After climbing",
+          "days": [
+            "tue",
+            "thu"
+          ],
+          "start": "20:30",
+          "end": "21:30"
+        }
+      ],
+      "walking_pace": "relaxed",
+      "runner_opt_in": false,
+      "default_tip_cents": 100,
+      "notify_push": true,
+      "notify_messages": true,
+      "share_location_when_running": false
+    },
+    "onboarding_complete": true
+  }
+]

@@ -1,0 +1,52 @@
+/* Near-opaque surface: all text sits on this. */
+.panel {
+  position: relative;
+  background: var(--panel);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: var(--r-panel);
+  box-shadow: var(--shadow-panel);
+  padding: var(--space-5);
+}
+
+.tight {
+  padding: var(--space-4);
+}
+
+.flush {
+  padding: 0;
+  overflow: hidden;
+}
+
+/* Aero window glass, chrome only (bars, rails, map chips): a sky tint with a
+   hard reflection line at the middle and a blue rim, like Windows 7. */
+.glass {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.86) 0%, rgba(238, 249, 255, 0.7) 48%, rgba(196, 229, 249, 0.62) 52%, rgba(224, 242, 253, 0.76) 100%);
+  -webkit-backdrop-filter: blur(14px) saturate(170%);
+  backdrop-filter: blur(14px) saturate(170%);
+  border: 1px solid rgba(80, 150, 210, 0.45);
+  box-shadow:
+    inset 0 1px 0 #fff,
+    inset 0 -1px 0 rgba(255, 255, 255, 0.6),
+    0 8px 24px rgba(16, 82, 128, 0.16);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass {
+    background: linear-gradient(180deg, #ffffff 0%, #f1f9ff 48%, #d9effc 52%, #eaf6fe 100%);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .glass {
+    background: #f4fbff;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .panel,
+  .glass {
+    border: 1px solid CanvasText;
+  }
+}

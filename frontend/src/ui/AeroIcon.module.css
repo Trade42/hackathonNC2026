@@ -1,0 +1,135 @@
+.icon {
+  --c1: #9adcff;
+  --c2: #2a9be0;
+  --c3: #0b5f9e;
+  --edge: rgba(6, 70, 120, 0.5);
+  --glow: rgba(20, 110, 190, 0.32);
+  position: relative;
+  isolation: isolate;
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: var(--s);
+  height: var(--s);
+  overflow: hidden;
+  border-radius: 28%;
+  color: #fff;
+  background:
+    radial-gradient(110% 70% at 50% 112%, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 60%),
+    linear-gradient(180deg, var(--c1) 0%, var(--c2) 55%, var(--c3) 100%);
+  border: 1px solid var(--edge);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -0.12em 0.4em rgba(0, 30, 70, 0.18),
+    0 0.35em 0.9em var(--glow),
+    0 1px 2px rgba(10, 60, 100, 0.25);
+  font-size: var(--s);
+  transition:
+    transform var(--t-ui) var(--ease-out),
+    box-shadow var(--t-ui) var(--ease-out);
+}
+
+/* specular cap */
+.icon::before {
+  content: '';
+  position: absolute;
+  z-index: 0;
+  left: 7%;
+  right: 7%;
+  top: 4%;
+  height: 50%;
+  border-radius: 46% 46% 50% 50% / 36% 36% 64% 64%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.14));
+}
+
+/* the sheen that sweeps across on hover */
+.icon::after {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  inset: -40%;
+  background: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.55) 50%, transparent 60%);
+  transform: translateX(-70%);
+  pointer-events: none;
+}
+
+.glyph {
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 1px 1px rgba(0, 40, 80, 0.45));
+}
+
+.orb {
+  border-radius: 50%;
+}
+.orb::before {
+  left: 14%;
+  right: 14%;
+  top: 5%;
+  height: 46%;
+  border-radius: 50%;
+}
+
+.aqua {
+  --c1: #a2f4f2;
+  --c2: #22b8cc;
+  --c3: #0a7891;
+  --edge: rgba(6, 90, 110, 0.5);
+  --glow: rgba(20, 150, 180, 0.3);
+}
+.grass {
+  --c1: #d2f58a;
+  --c2: #62bd33;
+  --c3: #2c7b1b;
+  --edge: rgba(30, 90, 20, 0.5);
+  --glow: rgba(60, 140, 40, 0.3);
+}
+.leaf {
+  --c1: #a5e895;
+  --c2: #2e9a3b;
+  --c3: #17611f;
+  --edge: rgba(20, 80, 30, 0.55);
+  --glow: rgba(30, 110, 40, 0.3);
+}
+
+@media (hover: hover) {
+  :where(a, button, li, article):hover > .icon,
+  .icon:hover {
+    transform: translateY(-2px) scale(1.04);
+  }
+  :where(a, button, li, article):hover > .icon::after,
+  .icon:hover::after {
+    animation: sweep 0.9s var(--ease-out);
+  }
+}
+
+@keyframes sweep {
+  from {
+    transform: translateX(-70%);
+  }
+  to {
+    transform: translateX(70%);
+  }
+}
+
+.float {
+  animation: float 5s var(--ease-float) infinite alternate;
+}
+
+@keyframes float {
+  from {
+    translate: 0 0;
+  }
+  to {
+    translate: 0 -4px;
+  }
+}
+
+@media (forced-colors: active) {
+  .icon {
+    forced-color-adjust: none;
+    background: Canvas;
+    color: CanvasText;
+    border-color: CanvasText;
+  }
+}

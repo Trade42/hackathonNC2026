@@ -1,0 +1,16 @@
+{
+  "name": "ferry-db-check",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Applies backend/migrations to throwaway local Postgres databases and checks the ferry schema's security invariants.",
+  "type": "module",
+  "scripts": {
+    "check": "node check-migrations.mjs"
+  },
+  "engines": {
+    "node": ">=21.7"
+  },
+  "dependencies": {
+    "pg": "8.23.1"
+  }
+}

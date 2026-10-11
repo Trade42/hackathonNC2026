@@ -1,0 +1,3 @@
+[test]
+# Silences the sidecar's log lines; tests that check logs install their own sink.
+preload = ["./test/setup.ts"]

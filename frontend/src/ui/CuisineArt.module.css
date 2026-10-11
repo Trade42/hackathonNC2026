@@ -1,0 +1,123 @@
+.art {
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  isolation: isolate;
+  background: linear-gradient(160deg, var(--a1), var(--a2));
+}
+
+/* the gloss across the top, as on the gel buttons */
+.art::after {
+  content: '';
+  position: absolute;
+  inset: 0 0 52% 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0));
+  pointer-events: none;
+}
+
+.thumb {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+}
+.card {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+}
+.banner {
+  width: 100%;
+  height: clamp(140px, 30vw, 220px);
+}
+
+.food {
+  position: relative;
+  z-index: 1;
+  width: 72%;
+  height: 72%;
+  filter: drop-shadow(0 6px 8px rgba(80, 40, 10, 0.18));
+}
+.card .food {
+  width: 46%;
+  height: 80%;
+}
+.banner .food {
+  width: auto;
+  height: 74%;
+  animation: hover 6s var(--ease-float) infinite alternate;
+}
+
+@keyframes hover {
+  from {
+    transform: translateY(2px) rotate(-2deg);
+  }
+  to {
+    transform: translateY(-4px) rotate(2deg);
+  }
+}
+
+.bubble {
+  position: absolute;
+  z-index: 0;
+  right: 10%;
+  top: 14%;
+  width: 22%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.95) 0 8%, rgba(255, 255, 255, 0.2) 20%, rgba(255, 255, 255, 0.08) 60%, rgba(255, 255, 255, 0.7) 100%);
+  animation: drift 9s var(--ease-float) infinite alternate;
+}
+.b2 {
+  left: 8%;
+  right: auto;
+  top: auto;
+  bottom: 12%;
+  width: 14%;
+  animation-duration: 11s;
+  animation-delay: -4s;
+}
+.thumb .bubble {
+  display: none;
+}
+
+@keyframes drift {
+  from {
+    transform: translate(0, 0);
+  }
+  to {
+    transform: translate(-6px, -10px);
+  }
+}
+
+.taco {
+  --a1: #fff4d8;
+  --a2: #ffd27a;
+}
+.burger {
+  --a1: #ffefe0;
+  --a2: #ffc58f;
+}
+.bowl {
+  --a1: #e9fbff;
+  --a2: #a7e3f4;
+}
+.pita {
+  --a1: #f3fbe6;
+  --a2: #cdeba2;
+}
+.cookie {
+  --a1: #ffeaf3;
+  --a2: #f7bed4;
+}
+.bagel {
+  --a1: #fff7e3;
+  --a2: #f3d39a;
+}
+.basket {
+  --a1: #eef8ff;
+  --a2: #bfe2f8;
+}
+.plate {
+  --a1: #f4faff;
+  --a2: #d6ecfa;
+}

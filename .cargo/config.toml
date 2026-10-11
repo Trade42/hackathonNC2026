@@ -1,0 +1,13 @@
+# Tests and `cargo run` must never reach the Supabase project.
+#
+# Cargo reads this file when it is started from this directory or below (it walks up from the
+# current directory, not from --manifest-path), and applies [env] to the processes it starts:
+# build scripts, `cargo run` and `cargo test`. A DATABASE_URL already in the process environment
+# wins, so a run can point at its own ferry_dev_<task> database.
+#
+# This is the second layer. The first is the guard in backend/ferry-core/tests/common/mod.rs,
+# which every test binary runs before its harness and which works from any directory.
+# The shared dev server runs backend/target/debug/ferry-core directly, outside cargo, so it reads
+# the real DATABASE_URL from the root .env.
+[env]
+DATABASE_URL = "postgres://postgres:postgres@127.0.0.1:55432/postgres"

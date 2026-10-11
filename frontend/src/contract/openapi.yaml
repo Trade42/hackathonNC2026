@@ -1,0 +1,2231 @@
+openapi: 3.1.0
+info:
+  title: Ferry API
+  version: 1.5.0
+  description: |
+    Contract v1.5.0 between the Ferry backend and frontend (spec section 6, docs/PROMPT-backend.md,
+    plus the changes listed in contract/CHANGELOG.md). The backend owns this file. Changes are
+    additive only (new optional fields or new endpoints), each with a line in contract/CHANGELOG.md.
+    The exceptions are Sal's decisions. v1.2, for Photon's shared number pool, changed
+    POST /v1/auth/text/start and made PublicConfig.agent.imessage_phone_e164 nullable. v1.3, for
+    the move to Telegram, removes /v1/auth/text/* (Telegram sign-in through the bot replaces it)
+    and makes User.phone_masked nullable.
+
+    Messaging runs on Telegram through the bot; iMessage is off. The agent's deep links
+    {web_url}/r/{run_id}, /o/{order_id} and /i/{invite_id} are unchanged, and the bot sends them
+    as link buttons.
+
+    Conventions: JSON everywhere. Money is integer cents (USD). Distances are meters. Times are
+    ISO 8601 UTC strings. Coordinates are {lat, lng}, except GeoJSON route coordinates, which are
+    [lng, lat]. Phone numbers are E.164 strings. IDs are opaque strings with prefixes: usr_, cir_,
+    area_, rst_, itm_, opt_, cho_, place_, run_, ord_, req_, inv_, ntf_, txn_.
+
+    Send Authorization: Bearer <jwt> on everything except /v1/auth/* and /v1/public/*.
+
+    Supabase is the backend's database and file storage. Public images are plain URLs. The client
+    uploads a receipt photo straight to Supabase Storage with a one-time token from this API.
+    Clients never query Supabase tables and never use Supabase Auth or Realtime.
+
+    Realtime: the WebSocket {API_BASE}/v1/stream?ticket=<ticket> (or ?token=<jwt>) is not a REST
+    path, so it is not listed under paths. Its messages are the Stream* and *Event schemas in
+    components/schemas; see contract/events.md. POST /v1/stream/ticket issues the ticket.
+servers:
+  - url: '{api_base}'
+    description: API_BASE. REST paths below start with /v1.
+    variables:
+      api_base:
+        default: http://localhost:8080
+        description: The backend origin; the live URL is in docs/STATUS-backend.md.
+security:
+  - bearerAuth: []
+tags:
+  - name: auth
+    description: Sign-in through the Telegram bot, and demo sign-in.
+  - name: profile
+    description: The signed-in user and their questionnaire answers.
+  - name: catalog
+    description: Areas, restaurants and menus.
+  - name: runs
+    description: Runs (a runner's trip to a restaurant) and their state machine.
+  - name: orders
+    description: Orders on a run, handoff and cancel.
+  - name: requests
+    description: Pickup requests matched to runners.
+  - name: tracking
+    description: Runner location pings and live tracking.
+  - name: circles
+    description: Circles (groups of friends) and meet-again.
+  - name: invites
+    description: Meetup invites.
+  - name: notifications
+    description: In-app notifications and push subscriptions.
+  - name: wallet
+    description: The Nessie-backed wallet.
+  - name: impact
+    description: CO2 and car miles saved.
+  - name: config
+    description: Public client configuration.
+  - name: realtime
+    description: Tickets for the WebSocket stream (see contract/events.md).
+
+paths:
+  /v1/auth/telegram/start:
+    post:
+      tags: [auth]
+      operationId: startTelegramAuth
+      x-priority: P0
+      summary: Start sign-in through the Telegram bot
+      description: >-
+        Telegram sign-in. The response's bot_url is https://t.me/<bot>?start=<code>. The client
+        opens bot_url, which opens a chat with the Ferry bot in Telegram; on desktop the client
+        also shows bot_url as a QR code to scan with a phone. Next to it the client shows
+        confirm_code: "Telegram will show 4821. Confirm only if it matches." The user taps Start,
+        and the bot receives /start <code> from that Telegram user. That does not verify the
+        challenge: the bot replies "Sign in to Ferry on another device? Check that the screen
+        shows 4821." with the same confirm_code and two buttons, Confirm and Not me. The
+        challenge turns verified only when the same Telegram user taps Confirm, for that user's
+        Telegram account (identified by its Telegram user id, not a phone), creating the Ferry
+        account on its first sign-in. Not me expires the challenge. The matching code is what
+        stops a stolen link: someone who opens a link another person started sees a code that
+        matches nothing on their own screen. Meanwhile the client polls
+        GET /v1/auth/telegram/{challenge_id} every 2 s until the status is verified or expired.
+        The code in bot_url is single use and is not the challenge_id: anyone who sees the QR code
+        learns it, but only the holder of the challenge_id can collect the token. Clients open
+        bot_url as given and never parse it. No body. Too many starts is 429 rate_limited. If the
+        server has no bot configured, the error is 503 upstream_unavailable.
+      security: []
+      responses:
+        '200':
+          description: The challenge and the bot link to open.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TelegramAuthChallenge' }
+        '429': { $ref: '#/components/responses/RateLimited' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/auth/telegram/{challenge_id}:
+    parameters:
+      - $ref: '#/components/parameters/ChallengeId'
+    get:
+      tags: [auth]
+      operationId: getTelegramAuthStatus
+      x-priority: P0
+      summary: Poll a Telegram sign-in challenge
+      description: >-
+        The client polls every 2 s after POST /v1/auth/telegram/start. pending: the user has not
+        yet tapped Confirm in the bot (they may not have tapped Start yet, or the bot is waiting
+        for Confirm). verified: the user tapped Confirm in Telegram. The first poll that sees it,
+        within a short time after Confirm, carries token, user and is_new (true when this sign-in
+        created the account), exactly once; every later poll answers only the status, so a client
+        that missed them starts again. expired: expires_at passed before the user tapped Confirm,
+        or the user tapped Not me; the client starts again. An unknown challenge_id is 404
+        not_found.
+      security: []
+      responses:
+        '200':
+          description: The challenge status; token, user and is_new arrive once verified.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TelegramAuthStatus' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/auth/demo:
+    post:
+      tags: [auth]
+      operationId: demoSignIn
+      x-priority: P0
+      summary: Sign in as a demo persona
+      description: Only when demo_mode is true.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/DemoSignInRequest' }
+      responses:
+        '200':
+          description: A token and the persona's user.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AuthSession' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/me:
+    get:
+      tags: [profile]
+      operationId: getMe
+      x-priority: P0
+      summary: The signed-in user
+      responses:
+        '200':
+          description: The signed-in user.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/User' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/me/profile:
+    put:
+      tags: [profile]
+      operationId: updateProfile
+      x-priority: P0
+      summary: Save the questionnaire answers
+      description: Sets onboarding_complete.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/UpdateProfileRequest' }
+      responses:
+        '200':
+          description: The updated user.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/User' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/me/stats:
+    get:
+      tags: [profile]
+      operationId: getMyStats
+      x-priority: P1
+      summary: The signed-in user's totals
+      responses:
+        '200':
+          description: The user's totals.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MeStats' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/areas:
+    get:
+      tags: [catalog]
+      operationId: listAreas
+      x-priority: P0
+      summary: List areas
+      responses:
+        '200':
+          description: All areas.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Area' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/restaurants:
+    get:
+      tags: [catalog]
+      operationId: listRestaurants
+      x-priority: P0
+      summary: List restaurants
+      parameters:
+        - name: area_id
+          in: query
+          required: false
+          description: Only restaurants in this area (area_ prefix).
+          schema: { type: string, example: area_franklin }
+        - name: q
+          in: query
+          required: false
+          description: Free-text search over names and cuisines.
+          schema: { type: string }
+        - name: open_now
+          in: query
+          required: false
+          description: Only restaurants open now.
+          schema: { type: boolean }
+      responses:
+        '200':
+          description: Matching restaurants.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Restaurant' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/restaurants/{id}/menu:
+    parameters:
+      - $ref: '#/components/parameters/RestaurantId'
+    get:
+      tags: [catalog]
+      operationId: getMenu
+      x-priority: P0
+      summary: A restaurant's menu
+      responses:
+        '200':
+          description: The menu.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Menu' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/places:
+    get:
+      tags: [catalog]
+      operationId: listPlaces
+      x-priority: P0
+      summary: List drop-off places
+      description: >-
+        The drop-off places to pick from: the fixtures (contract/fixtures/places.json) plus any
+        added later. Every place in this list has an id. A client may still send a Place without
+        an id (a map pin) as a drop-off.
+      responses:
+        '200':
+          description: All drop-off places.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Place' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/runs:
+    get:
+      tags: [runs]
+      operationId: listRuns
+      x-priority: P0
+      summary: Runs in my circles, or my own active runs
+      parameters:
+        - name: status
+          in: query
+          required: false
+          description: Only runs with this status, for example open. With mine=true, it narrows that list.
+          schema: { $ref: '#/components/schemas/RunStatus' }
+        - name: mine
+          in: query
+          required: false
+          description: >-
+            When true, the runs where the viewer is the runner with status open, closed, purchased
+            or delivering, in whatever circle. When absent or false, the runs in the viewer's
+            circles, as before.
+          schema: { type: boolean }
+      responses:
+        '200':
+          description: Runs in the user's circles, or with mine=true the user's own active runs.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Run' }
+        default: { $ref: '#/components/responses/Error' }
+    post:
+      tags: [runs]
+      operationId: createRun
+      x-priority: P0
+      summary: Open a run (I am the runner)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CreateRunRequest' }
+      responses:
+        '200':
+          description: The new run.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Run' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/runs/{id}:
+    parameters:
+      - $ref: '#/components/parameters/RunId'
+    get:
+      tags: [runs]
+      operationId: getRun
+      x-priority: P0
+      summary: A run with its orders
+      description: The runner sees every order; everyone else sees only their own.
+      responses:
+        '200':
+          description: The run detail.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RunDetail' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/runs/{id}/orders:
+    parameters:
+      - $ref: '#/components/parameters/RunId'
+    post:
+      tags: [orders]
+      operationId: placeOrder
+      x-priority: P0
+      summary: Place an order on a run
+      description: Moves the total (subtotal + tax + ferry fee + tip) from the customer's account to Escrow.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CreateOrderRequest' }
+      responses:
+        '201':
+          description: The funded order.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Order' }
+        '400': { $ref: '#/components/responses/ValidationFailed' }
+        '402': { $ref: '#/components/responses/InsufficientFunds' }
+        '409': { $ref: '#/components/responses/WindowClosed' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/runs/{id}/quote:
+    parameters:
+      - $ref: '#/components/parameters/RunId'
+    post:
+      tags: [orders]
+      operationId: quoteOrder
+      x-priority: P1
+      summary: Price an order before placing it
+      description: >-
+        Prices the body exactly as POST /v1/runs/{id}/orders would, Ferry fee included, with no
+        hold and no side effects: nothing is stored and no money moves. The same 409 window_closed
+        and 400 validation_failed as placing an order. Never 402: a quote does not check the
+        balance.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CreateOrderRequest' }
+      responses:
+        '200':
+          description: The price breakdown.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/OrderQuote' }
+        '400': { $ref: '#/components/responses/ValidationFailed' }
+        '409': { $ref: '#/components/responses/WindowClosed' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/runs/{id}/close:
+    parameters:
+      - $ref: '#/components/parameters/RunId'
+    post:
+      tags: [runs]
+      operationId: closeRun
+      x-priority: P0
+      summary: Close the order window
+      description: Runner only; funds the Ferry Card.
+      responses:
+        '200':
+          description: The closed run.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Run' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/runs/{id}/receipt-upload:
+    parameters:
+      - $ref: '#/components/parameters/RunId'
+    post:
+      tags: [runs]
+      operationId: createReceiptUpload
+      x-priority: P1
+      summary: Get a one-time receipt photo upload token
+      description: >-
+        Runner only. The client then uploads the photo with supabase-js:
+        storage.from(bucket).uploadToSignedUrl(path, token, file).
+      responses:
+        '200':
+          description: Where and how to upload.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ReceiptUpload' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/runs/{id}/purchased:
+    parameters:
+      - $ref: '#/components/parameters/RunId'
+    post:
+      tags: [runs]
+      operationId: markRunPurchased
+      x-priority: P0
+      summary: Record the purchase
+      description: Runner only; receipt_path is the path from receipt-upload.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/MarkPurchasedRequest' }
+      responses:
+        '200':
+          description: The purchased run.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Run' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/runs/{id}/picked-up:
+    parameters:
+      - $ref: '#/components/parameters/RunId'
+    post:
+      tags: [runs]
+      operationId: markRunPickedUp
+      x-priority: P0
+      summary: Record the pickup
+      description: Runner only; status becomes delivering.
+      responses:
+        '200':
+          description: The delivering run.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Run' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/runs/{id}/cancel:
+    parameters:
+      - $ref: '#/components/parameters/RunId'
+    post:
+      tags: [runs]
+      operationId: cancelRun
+      x-priority: P1
+      summary: Cancel a run
+      responses:
+        '200':
+          description: The cancelled run.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Run' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/orders:
+    get:
+      tags: [orders]
+      operationId: listOrders
+      x-priority: P0
+      summary: List orders
+      parameters:
+        - name: mine
+          in: query
+          required: false
+          description: Only my orders (mine=true).
+          schema: { type: boolean }
+      responses:
+        '200':
+          description: The orders.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Order' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/orders/{id}:
+    parameters:
+      - $ref: '#/components/parameters/OrderId'
+    get:
+      tags: [orders]
+      operationId: getOrder
+      x-priority: P0
+      summary: An order
+      responses:
+        '200':
+          description: The order.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Order' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/orders/{id}/handoff:
+    parameters:
+      - $ref: '#/components/parameters/OrderId'
+    post:
+      tags: [orders]
+      operationId: confirmHandoff
+      x-priority: P0
+      summary: Confirm the handoff
+      description: The customer confirms (no code), or the runner submits the customer's code.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/HandoffRequest' }
+      responses:
+        '200':
+          description: The delivered or settled order.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Order' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/orders/{id}/cancel:
+    parameters:
+      - $ref: '#/components/parameters/OrderId'
+    post:
+      tags: [orders]
+      operationId: cancelOrder
+      x-priority: P1
+      summary: Cancel an order
+      description: Before purchase only.
+      responses:
+        '200':
+          description: The cancelled order.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Order' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/requests:
+    post:
+      tags: [requests]
+      operationId: createPickupRequest
+      x-priority: P1
+      summary: Ask for a pickup when no run is open
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CreatePickupRequest' }
+      responses:
+        '200':
+          description: The request and its match state.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PickupRequest' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/runs/{id}/location:
+    parameters:
+      - $ref: '#/components/parameters/RunId'
+    post:
+      tags: [tracking]
+      operationId: postRunnerLocation
+      x-priority: P0
+      summary: Report the runner's location
+      description: The runner's app, every 5 s while active.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LocationPing' }
+      responses:
+        '204':
+          description: Recorded.
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/runs/{id}/track:
+    parameters:
+      - $ref: '#/components/parameters/RunId'
+    get:
+      tags: [tracking]
+      operationId: getRunTrack
+      x-priority: P0
+      summary: Live tracking for a run
+      description: >-
+        runner_location and route are null unless the viewer is the run's runner or has an active
+        order on the run (status funded, purchased or picked_up), and null for everyone after
+        delivery.
+      responses:
+        '200':
+          description: The runner's location, route and ETAs.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Track' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/circles:
+    get:
+      tags: [circles]
+      operationId: listCircles
+      x-priority: P1
+      summary: My circles
+      responses:
+        '200':
+          description: The user's circles.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Circle' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/circles/{id}:
+    parameters:
+      - $ref: '#/components/parameters/CircleId'
+    get:
+      tags: [circles]
+      operationId: getCircle
+      x-priority: P1
+      summary: A circle
+      responses:
+        '200':
+          description: The circle.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Circle' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/circles/{id}/meet-again:
+    parameters:
+      - $ref: '#/components/parameters/CircleId'
+    post:
+      tags: [circles]
+      operationId: meetAgain
+      x-priority: P1
+      summary: Invite the circle to meet again
+      description: >-
+        A meetup invite to the circle's other members, each with a pending response. v1.5: the
+        invite can name a place (MeetAgainRequest.place, echoed as Invite.place) and a time. Each
+        invitee gets an invite notification ("Dana wants to go to Cosmic Cantina at 7:00 PM", with
+        Chapel Hill's clock) and its push, and each invitee who has pressed Start with the bot also
+        gets a Telegram DM with "I'm in" and "Can't make it" buttons. 400 validation_failed for a
+        bad message, proposed_time or place; 404 not_found for a circle the user is not in; 409
+        conflict when nobody else is in it.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/MeetAgainRequest' }
+      responses:
+        '200':
+          description: The new invite.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Invite' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/invites:
+    get:
+      tags: [invites]
+      operationId: listInvites
+      x-priority: P1
+      summary: My invites
+      responses:
+        '200':
+          description: The user's invites.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Invite' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/invites/{id}/respond:
+    parameters:
+      - $ref: '#/components/parameters/InviteId'
+    post:
+      tags: [invites]
+      operationId: respondInvite
+      x-priority: P1
+      summary: Accept or decline an invite
+      description: >-
+        Invitees only (the inviter gets 403 forbidden, anyone else 404 not_found; 409 conflict after
+        the deadline). A later answer replaces an earlier one. v1.5: every answer that changes the
+        invitee's response is relayed to the inviter once, as an invite notification ("Jordan's
+        in." or "Maya can't make it.") and, when the inviter has pressed Start with the bot, a
+        Telegram DM with the same line. Repeating the same answer relays nothing.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RespondInviteRequest' }
+      responses:
+        '200':
+          description: The updated invite.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Invite' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/notifications:
+    get:
+      tags: [notifications]
+      operationId: listNotifications
+      x-priority: P1
+      summary: My notifications
+      responses:
+        '200':
+          description: The user's notifications.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Notification' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/notifications/{id}/read:
+    parameters:
+      - $ref: '#/components/parameters/NotificationId'
+    post:
+      tags: [notifications]
+      operationId: markNotificationRead
+      x-priority: P1
+      summary: Mark a notification read
+      responses:
+        '204':
+          description: Marked read.
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/public/push-key:
+    get:
+      tags: [notifications]
+      operationId: getPushKey
+      x-priority: P1
+      summary: The Web Push VAPID public key
+      security: []
+      responses:
+        '200':
+          description: The VAPID public key.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PushKey' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/push/subscribe:
+    post:
+      tags: [notifications]
+      operationId: subscribePush
+      x-priority: P1
+      summary: Register a push subscription or device token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PushSubscribeRequest' }
+      responses:
+        '204':
+          description: Registered.
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/wallet:
+    get:
+      tags: [wallet]
+      operationId: getWallet
+      x-priority: P0
+      summary: My wallet
+      responses:
+        '200':
+          description: The wallet.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Wallet' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/wallet/demo-topup:
+    post:
+      tags: [wallet]
+      operationId: demoTopup
+      x-priority: P1
+      summary: Add demo money
+      description: demo_mode only.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/DemoTopupRequest' }
+      responses:
+        '200':
+          description: The updated wallet.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Wallet' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/impact:
+    get:
+      tags: [impact]
+      operationId: getImpact
+      x-priority: P0
+      summary: Impact for me, a circle or the campus
+      parameters:
+        - name: scope
+          in: query
+          required: false
+          description: me, circle or campus.
+          schema: { $ref: '#/components/schemas/ImpactScope' }
+        - name: circle_id
+          in: query
+          required: false
+          description: The circle (cir_ prefix) when scope is circle.
+          schema: { type: string, example: cir_hinton4 }
+      responses:
+        '200':
+          description: The impact.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Impact' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/public/impact:
+    get:
+      tags: [impact]
+      operationId: getPublicImpact
+      x-priority: P0
+      summary: Campus impact for the landing page
+      security: []
+      responses:
+        '200':
+          description: The campus impact.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Impact' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/public/config:
+    get:
+      tags: [config]
+      operationId: getPublicConfig
+      x-priority: P0
+      summary: Public client configuration
+      security: []
+      responses:
+        '200':
+          description: The public config.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PublicConfig' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/public/runs/{id}:
+    parameters:
+      - $ref: '#/components/parameters/RunId'
+    get:
+      tags: [runs]
+      operationId: getRunPreview
+      x-priority: P1
+      summary: Public preview of a run, for link previews
+      description: >-
+        For the link preview of {web_url}/r/{run_id}, which a chat app or the web page fetches
+        without signing in. The bot sends that link as a link button; a copy pasted into a chat
+        gets a preview. It returns only these four fields: nothing else about the run, its
+        orders or its people. An unknown id is 404 not_found.
+      security: []
+      responses:
+        '200':
+          description: The run preview.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RunPreview' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        default: { $ref: '#/components/responses/Error' }
+
+  /v1/stream/ticket:
+    post:
+      tags: [realtime]
+      operationId: createStreamTicket
+      x-priority: P1
+      summary: Get a one-time WebSocket ticket
+      description: >-
+        A single-use ticket, valid about 60 s, to open {API_BASE}/v1/stream?ticket=<ticket>
+        instead of putting the long-lived JWT in the URL. ?token=<jwt> still works. See
+        contract/events.md.
+      responses:
+        '200':
+          description: The ticket.
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/StreamTicket' }
+        default: { $ref: '#/components/responses/Error' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: The JWT from the GET /v1/auth/telegram/{challenge_id} poll (once verified) or from POST /v1/auth/demo.
+
+  parameters:
+    ChallengeId:
+      name: challenge_id
+      in: path
+      required: true
+      description: The challenge_id from POST /v1/auth/telegram/start.
+      schema: { type: string }
+    RestaurantId:
+      name: id
+      in: path
+      required: true
+      description: Restaurant id (rst_ prefix).
+      schema: { type: string, example: rst_cosmic }
+    RunId:
+      name: id
+      in: path
+      required: true
+      description: Run id (run_ prefix).
+      schema: { type: string, example: run_demo }
+    OrderId:
+      name: id
+      in: path
+      required: true
+      description: Order id (ord_ prefix).
+      schema: { type: string, example: ord_8kq2m4 }
+    CircleId:
+      name: id
+      in: path
+      required: true
+      description: Circle id (cir_ prefix).
+      schema: { type: string, example: cir_hinton4 }
+    InviteId:
+      name: id
+      in: path
+      required: true
+      description: Invite id (inv_ prefix).
+      schema: { type: string, example: inv_3jd8s1 }
+    NotificationId:
+      name: id
+      in: path
+      required: true
+      description: Notification id (ntf_ prefix).
+      schema: { type: string, example: ntf_5b2k9x }
+
+  responses:
+    Error:
+      description: Any error. The HTTP status carries the class; error.code carries the reason.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    InsufficientFunds:
+      description: insufficient_funds. The customer's balance does not cover the order total.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+          example:
+            error: { code: insufficient_funds, message: Your balance does not cover this order. }
+    WindowClosed:
+      description: window_closed. The run's order window has closed.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+          example:
+            error: { code: window_closed, message: This run is no longer taking orders. }
+    ValidationFailed:
+      description: validation_failed. The request is malformed or a value is invalid (always 400).
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+          example:
+            error: { code: validation_failed, message: A value in the request is invalid. }
+    NotFound:
+      description: not_found. Nothing with this id exists.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+          example:
+            error: { code: not_found, message: Not found. }
+    RateLimited:
+      description: rate_limited. Too many requests; try again later.
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+          example:
+            error: { code: rate_limited, message: Too many sign-in attempts. Try again in a few minutes. }
+
+  schemas:
+    # ---------- Errors ----------
+    ErrorCode:
+      type: string
+      enum:
+        - unauthorized
+        - forbidden
+        - not_found
+        - validation_failed
+        - conflict
+        - window_closed
+        - insufficient_funds
+        - upstream_unavailable
+        - rate_limited
+    ErrorBody:
+      type: object
+      required: [code, message]
+      properties:
+        code: { $ref: '#/components/schemas/ErrorCode' }
+        message: { type: string }
+        details:
+          description: Optional extra detail; any JSON value.
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error: { $ref: '#/components/schemas/ErrorBody' }
+
+    # ---------- Types ----------
+    LatLng:
+      type: object
+      required: [lat, lng]
+      properties:
+        lat: { type: number, example: 35.913211 }
+        lng: { type: number, example: -79.055094 }
+
+    Place:
+      type: object
+      required: [label, location]
+      properties:
+        id: { type: string, description: Place id (place_ prefix), example: place_fetzer }
+        label: { type: string, example: Fetzer Gym (HackNC) }
+        location: { $ref: '#/components/schemas/LatLng' }
+        note: { type: string }
+
+    PublicUser:
+      type: object
+      required: [id, display_name, avatar_seed, bubble_color]
+      properties:
+        id: { type: string, description: User id (usr_ prefix), example: usr_maya }
+        display_name: { type: string, example: Maya }
+        avatar_seed: { type: string }
+        bubble_color: { type: string, example: '#F97316' }
+
+    Weekday:
+      type: string
+      enum: [mon, tue, wed, thu, fri, sat, sun]
+
+    UsualTime:
+      type: object
+      required: [label, days, start, end]
+      properties:
+        label: { type: string, example: Late-night snack }
+        days:
+          type: array
+          items: { $ref: '#/components/schemas/Weekday' }
+        start: { type: string, description: HH:MM, pattern: '^([01][0-9]|2[0-3]):[0-5][0-9]$', example: '21:00' }
+        end: { type: string, description: HH:MM, pattern: '^([01][0-9]|2[0-3]):[0-5][0-9]$', example: '23:30' }
+
+    WalkingPace:
+      type: string
+      enum: [relaxed, normal, brisk]
+
+    Profile:
+      type: object
+      required:
+        - dropoff_default
+        - diet
+        - avoid
+        - favorite_cuisines
+        - favorite_restaurant_ids
+        - usual_times
+        - walking_pace
+        - runner_opt_in
+        - default_tip_cents
+        - notify_push
+        - notify_messages
+        - share_location_when_running
+      properties:
+        dropoff_default:
+          oneOf:
+            - $ref: '#/components/schemas/Place'
+            - type: 'null'
+        diet:
+          type: array
+          items: { type: string }
+        avoid:
+          type: array
+          items: { type: string }
+        favorite_cuisines:
+          type: array
+          items: { type: string }
+        favorite_restaurant_ids:
+          type: array
+          items: { type: string }
+        usual_times:
+          type: array
+          items: { $ref: '#/components/schemas/UsualTime' }
+        walking_pace: { $ref: '#/components/schemas/WalkingPace' }
+        runner_opt_in: { type: boolean }
+        default_tip_cents: { type: integer, example: 200 }
+        notify_push: { type: boolean }
+        notify_messages: { type: boolean }
+        share_location_when_running: { type: boolean }
+        max_dropoff_distance_m:
+          type: [integer, 'null']
+          minimum: 50
+          maximum: 5000
+          description: >-
+            v1.4, optional. How far the user would walk, in meters (50 to 5000), to hand food over
+            when they run: POST /v1/runs uses it as the run's dropoff_radius_m when the request
+            leaves that out. GET /v1/me always sends it, null when unset. PUT /v1/me/profile
+            replaces it like every other answer, so leaving it out or sending null clears it.
+          example: 500
+
+    User:
+      description: >-
+        PublicUser plus phone_masked, telegram_username, profile and onboarding_complete
+        (flattened). Only the signed-in user gets their own User; other people appear as
+        PublicUser.
+      type: object
+      required: [id, display_name, avatar_seed, bubble_color, phone_masked, telegram_username, profile, onboarding_complete]
+      properties:
+        id: { type: string, description: User id (usr_ prefix), example: usr_maya }
+        display_name: { type: string, example: Maya }
+        avatar_seed: { type: string }
+        bubble_color: { type: string, example: '#F97316' }
+        phone_masked:
+          type: [string, 'null']
+          description: >-
+            The user's phone with all but the last 4 digits masked. Null for a user with no phone
+            on file, which is every user who signed up with Telegram.
+          example: '+1 ••• ••• 0102'
+        telegram_username:
+          type: [string, 'null']
+          description: >-
+            The user's Telegram username without the leading @, as Telegram gives it (show it as
+            @<username>). Null when the Telegram account has no username, and for users who have
+            not signed in with Telegram.
+        profile: { $ref: '#/components/schemas/Profile' }
+        onboarding_complete: { type: boolean }
+
+    Area:
+      type: object
+      required: [id, name, center]
+      properties:
+        id: { type: string, description: Area id (area_ prefix), example: area_franklin }
+        name: { type: string, example: Franklin St }
+        center: { $ref: '#/components/schemas/LatLng' }
+
+    PriceLevel:
+      type: integer
+      enum: [1, 2, 3]
+
+    Restaurant:
+      type: object
+      required:
+        - id
+        - name
+        - area_id
+        - cuisine
+        - location
+        - address
+        - is_open
+        - hours_today
+        - partner
+        - price_level
+        - walk_minutes_from_dropoff
+        - image_url
+      properties:
+        id: { type: string, description: Restaurant id (rst_ prefix), example: rst_cosmic }
+        name: { type: string, example: Cosmic Cantina }
+        area_id: { type: string, example: area_franklin }
+        cuisine:
+          type: array
+          items: { type: string }
+        location: { $ref: '#/components/schemas/LatLng' }
+        address: { type: string }
+        is_open: { type: boolean }
+        hours_today: { type: string, example: '11:00–04:00' }
+        partner: { type: boolean }
+        price_level: { $ref: '#/components/schemas/PriceLevel' }
+        walk_minutes_from_dropoff: { type: [number, 'null'] }
+        image_url: { type: [string, 'null'], format: uri }
+
+    MenuChoice:
+      type: object
+      required: [id, name, price_delta_cents]
+      properties:
+        id: { type: string, description: Choice id (cho_ prefix) }
+        name: { type: string }
+        price_delta_cents: { type: integer }
+
+    MenuOption:
+      type: object
+      required: [id, name, min, max, choices]
+      properties:
+        id: { type: string, description: Option id (opt_ prefix) }
+        name: { type: string }
+        min: { type: integer }
+        max: { type: integer }
+        choices:
+          type: array
+          items: { $ref: '#/components/schemas/MenuChoice' }
+
+    MenuItem:
+      type: object
+      required: [id, name, description, price_cents, tags, image_url, options]
+      properties:
+        id: { type: string, description: Item id (itm_ prefix), example: itm_cosmic_chicken_burrito }
+        name: { type: string }
+        description: { type: string }
+        price_cents: { type: integer }
+        tags:
+          type: array
+          items: { type: string }
+        image_url: { type: [string, 'null'], format: uri }
+        options:
+          type: array
+          items: { $ref: '#/components/schemas/MenuOption' }
+
+    MenuCategory:
+      type: object
+      required: [id, name, items]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        items:
+          type: array
+          items: { $ref: '#/components/schemas/MenuItem' }
+
+    Menu:
+      type: object
+      required: [restaurant_id, prices_are_estimates, categories]
+      properties:
+        restaurant_id: { type: string, example: rst_cosmic }
+        prices_are_estimates: { type: boolean }
+        categories:
+          type: array
+          items: { $ref: '#/components/schemas/MenuCategory' }
+
+    RunStatus:
+      type: string
+      enum: [open, closed, purchased, delivering, delivered, cancelled]
+
+    RunCreatedVia:
+      type: string
+      enum: [message, app]
+
+    RunnerLocation:
+      type: object
+      required: [location, at]
+      properties:
+        location: { $ref: '#/components/schemas/LatLng' }
+        at: { type: string, format: date-time }
+
+    Run:
+      type: object
+      required:
+        - id
+        - restaurant
+        - runner
+        - circle_id
+        - status
+        - leaving_at
+        - window_closes_at
+        - order_count
+        - created_via
+        - runner_location
+        - eta_minutes
+      properties:
+        id: { type: string, description: Run id (run_ prefix), example: run_demo }
+        restaurant: { $ref: '#/components/schemas/Restaurant' }
+        runner: { $ref: '#/components/schemas/PublicUser' }
+        circle_id: { type: string, example: cir_hinton4 }
+        status: { $ref: '#/components/schemas/RunStatus' }
+        leaving_at: { type: string, format: date-time }
+        window_closes_at: { type: string, format: date-time }
+        order_count: { type: integer }
+        created_via: { $ref: '#/components/schemas/RunCreatedVia' }
+        runner_location:
+          description: >-
+            The runner's last reported location. Only the run's runner and customers with an
+            active order on this run (status funded, purchased or picked_up) get it; everyone else
+            gets null, and everyone gets null after delivery.
+          oneOf:
+            - $ref: '#/components/schemas/RunnerLocation'
+            - type: 'null'
+        eta_minutes: { type: [number, 'null'] }
+        returning_at:
+          type: [string, 'null']
+          format: date-time
+          description: >-
+            v1.4. When the runner expects to be back: after leaving_at and at most 24 hours after
+            it. Always sent; null when the runner did not say.
+        return_place:
+          description: >-
+            v1.4. Where the runner heads back to, the center of their drop-off zone. Always sent;
+            null when the runner did not say.
+          oneOf:
+            - $ref: '#/components/schemas/Place'
+            - type: 'null'
+        dropoff_radius_m:
+          type: [integer, 'null']
+          minimum: 50
+          maximum: 5000
+          description: >-
+            v1.4. How far from return_place, in meters (50 to 5000), the runner will walk to hand
+            food over. When POST /v1/runs leaves it out, the runner's
+            Profile.max_dropoff_distance_m at that moment. Always sent; null when neither is set.
+            Every viewer gets the same plan.
+          example: 400
+
+    OrderStatus:
+      type: string
+      enum: [funded, purchased, picked_up, delivered, settled, cancelled, refunded]
+
+    OrderLine:
+      type: object
+      required: [menu_item_id, name, qty, choice_ids, unit_price_cents, line_total_cents]
+      properties:
+        menu_item_id: { type: string }
+        name: { type: string }
+        qty: { type: integer }
+        choice_ids:
+          type: array
+          items: { type: string }
+        unit_price_cents: { type: integer }
+        line_total_cents: { type: integer }
+        note: { type: string }
+
+    OrderTimelineEntry:
+      type: object
+      required: [status, at]
+      properties:
+        status: { $ref: '#/components/schemas/OrderStatus' }
+        at: { type: string, format: date-time }
+
+    Order:
+      type: object
+      required:
+        - id
+        - run_id
+        - restaurant_id
+        - customer
+        - runner
+        - lines
+        - subtotal_cents
+        - tax_cents
+        - ferry_fee_cents
+        - tip_cents
+        - total_cents
+        - status
+        - dropoff
+        - handoff_code
+        - eta_minutes
+        - co2_saved_g
+        - receipt_url
+        - timeline
+      properties:
+        id: { type: string, description: Order id (ord_ prefix), example: ord_8kq2m4 }
+        run_id: { type: string, example: run_demo }
+        restaurant_id: { type: string, example: rst_cosmic }
+        customer: { $ref: '#/components/schemas/PublicUser' }
+        runner: { $ref: '#/components/schemas/PublicUser' }
+        lines:
+          type: array
+          items: { $ref: '#/components/schemas/OrderLine' }
+        subtotal_cents: { type: integer }
+        tax_cents: { type: integer }
+        ferry_fee_cents: { type: integer }
+        tip_cents: { type: integer }
+        total_cents: { type: integer }
+        status: { $ref: '#/components/schemas/OrderStatus' }
+        dropoff: { $ref: '#/components/schemas/Place' }
+        handoff_code:
+          type: [string, 'null']
+          description: The 4-digit handoff code. Only this order's customer gets it; everyone else gets null.
+          example: '4829'
+        eta_minutes: { type: [number, 'null'] }
+        co2_saved_g: { type: [number, 'null'] }
+        receipt_url:
+          type: [string, 'null']
+          format: uri
+          description: A signed link to the runner's receipt photo, valid 1 hour. Only this order's customer and runner get it.
+        timeline:
+          type: array
+          items: { $ref: '#/components/schemas/OrderTimelineEntry' }
+        dropoff_radius_m:
+          type: [integer, 'null']
+          minimum: 50
+          maximum: 5000
+          description: >-
+            v1.4. How far from dropoff, in meters (50 to 5000), the customer will walk to meet the
+            runner, as the order request gave it. Always sent; null when it gave none.
+          example: 100
+
+    RunDetail:
+      description: Run plus orders (flattened). The runner sees every order; everyone else sees only their own.
+      type: object
+      required:
+        - id
+        - restaurant
+        - runner
+        - circle_id
+        - status
+        - leaving_at
+        - window_closes_at
+        - order_count
+        - created_via
+        - runner_location
+        - eta_minutes
+        - orders
+      properties:
+        id: { type: string, description: Run id (run_ prefix), example: run_demo }
+        restaurant: { $ref: '#/components/schemas/Restaurant' }
+        runner: { $ref: '#/components/schemas/PublicUser' }
+        circle_id: { type: string, example: cir_hinton4 }
+        status: { $ref: '#/components/schemas/RunStatus' }
+        leaving_at: { type: string, format: date-time }
+        window_closes_at: { type: string, format: date-time }
+        order_count: { type: integer }
+        created_via: { $ref: '#/components/schemas/RunCreatedVia' }
+        runner_location:
+          description: >-
+            The runner's last reported location. Only the run's runner and customers with an
+            active order on this run (status funded, purchased or picked_up) get it; everyone else
+            gets null, and everyone gets null after delivery.
+          oneOf:
+            - $ref: '#/components/schemas/RunnerLocation'
+            - type: 'null'
+        eta_minutes: { type: [number, 'null'] }
+        returning_at:
+          type: [string, 'null']
+          format: date-time
+          description: >-
+            v1.4. When the runner expects to be back: after leaving_at and at most 24 hours after
+            it. Always sent; null when the runner did not say.
+        return_place:
+          description: >-
+            v1.4. Where the runner heads back to, the center of their drop-off zone. Always sent;
+            null when the runner did not say.
+          oneOf:
+            - $ref: '#/components/schemas/Place'
+            - type: 'null'
+        dropoff_radius_m:
+          type: [integer, 'null']
+          minimum: 50
+          maximum: 5000
+          description: >-
+            v1.4. How far from return_place, in meters (50 to 5000), the runner will walk to hand
+            food over. When POST /v1/runs leaves it out, the runner's
+            Profile.max_dropoff_distance_m at that moment. Always sent; null when neither is set.
+            Every viewer gets the same plan.
+          example: 400
+        orders:
+          type: array
+          items: { $ref: '#/components/schemas/Order' }
+
+    GeoJSONLineString:
+      description: A GeoJSON LineString (RFC 7946). Each position is [lng, lat].
+      type: object
+      required: [type, coordinates]
+      properties:
+        type:
+          type: string
+          enum: [LineString]
+        coordinates:
+          type: array
+          minItems: 2
+          items:
+            type: array
+            description: '[lng, lat]'
+            minItems: 2
+            maxItems: 2
+            items: { type: number }
+          example: [[-79.055094, 35.913211], [-79.046905, 35.909152]]
+
+    TrackStop:
+      type: object
+      required: [order_id, dropoff, eta_minutes]
+      properties:
+        order_id: { type: string }
+        dropoff: { $ref: '#/components/schemas/Place' }
+        eta_minutes: { type: number }
+
+    Track:
+      type: object
+      required: [runner_location, route, distance_m, eta_minutes, stops]
+      properties:
+        runner_location:
+          description: >-
+            The runner's last reported location. Only the run's runner and customers with an
+            active order on this run (status funded, purchased or picked_up) get it; everyone else
+            gets null, and everyone gets null after delivery.
+          oneOf:
+            - $ref: '#/components/schemas/RunnerLocation'
+            - type: 'null'
+        route:
+          description: >-
+            The runner's walking route. Only the run's runner and customers with an active order on
+            this run (status funded, purchased or picked_up) get it; everyone else gets null, and
+            everyone gets null after delivery.
+          oneOf:
+            - $ref: '#/components/schemas/GeoJSONLineString'
+            - type: 'null'
+        distance_m: { type: [number, 'null'] }
+        eta_minutes: { type: [number, 'null'] }
+        stops:
+          type: array
+          items: { $ref: '#/components/schemas/TrackStop' }
+
+    CircleStats:
+      type: object
+      required: [runs, co2_saved_g]
+      properties:
+        runs: { type: integer }
+        co2_saved_g: { type: number }
+
+    Circle:
+      type: object
+      required: [id, name, emoji, members, last_met_at, last_active_at, stats]
+      properties:
+        id: { type: string, description: Circle id (cir_ prefix), example: cir_hinton4 }
+        name: { type: string, example: Hinton James 4th floor }
+        emoji: { type: string, example: 🌊 }
+        members:
+          type: array
+          items: { $ref: '#/components/schemas/PublicUser' }
+        last_met_at: { type: [string, 'null'], format: date-time }
+        last_active_at: { type: string, format: date-time }
+        stats: { $ref: '#/components/schemas/CircleStats' }
+
+    InviteStatus:
+      type: string
+      enum: [pending, accepted, declined, expired]
+
+    InviteResponseStatus:
+      type: string
+      enum: [pending, accepted, declined]
+
+    InviteResponse:
+      type: object
+      required: [user, status]
+      properties:
+        user: { $ref: '#/components/schemas/PublicUser' }
+        status: { $ref: '#/components/schemas/InviteResponseStatus' }
+
+    ComposeMessage:
+      description: >-
+        A message for the client to prefill in Messages (the iMessage group-thread fallback).
+        Unused while messaging runs on Telegram: InviteThread.compose is then always null.
+      type: object
+      required: [phones, body]
+      properties:
+        phones:
+          type: array
+          description: E.164 phone numbers.
+          items: { type: string, example: '+19195550101' }
+        body: { type: string }
+
+    InviteThreadState:
+      type: string
+      enum: [none, creating, ready]
+
+    InviteThread:
+      type: object
+      required: [state, compose, open_url]
+      properties:
+        state: { $ref: '#/components/schemas/InviteThreadState' }
+        compose:
+          description: >-
+            The iMessage fallback. Always null while messaging runs on Telegram (iMessage is off);
+            use open_url.
+          oneOf:
+            - $ref: '#/components/schemas/ComposeMessage'
+            - type: 'null'
+        open_url:
+          type: [string, 'null']
+          format: uri
+          description: >-
+            A Telegram link that opens the circle's group or chat: the group's invite link, which
+            the bot creates where it is an admin, or, for a group without one, the bot's
+            https://t.me/<bot>?startgroup=<code> link, which adds the bot to a group the members
+            make. Only the inviter and the invitees who accepted get it; every other copy has
+            null, and it is null while there is no link. The client opens it as given. In
+            Telegram, the bot DMs each invitee with "I'm in" and "Can't make it" buttons (v1.5;
+            Accept and Decline before), and an accepted member gets this link there too, as an
+            extra: the invite is about the place and the time, not the group.
+          example: 'https://t.me/+AbCdEf0123456789'
+
+    Invite:
+      type: object
+      required: [id, kind, circle_id, from, message, proposed_time, status, responses, thread]
+      properties:
+        id: { type: string, description: Invite id (inv_ prefix), example: inv_3jd8s1 }
+        kind:
+          type: string
+          enum: [meetup]
+        circle_id: { type: string, example: cir_hinton4 }
+        from: { $ref: '#/components/schemas/PublicUser' }
+        message: { type: string }
+        proposed_time: { type: [string, 'null'], format: date-time }
+        status: { $ref: '#/components/schemas/InviteStatus' }
+        responses:
+          type: array
+          items: { $ref: '#/components/schemas/InviteResponse' }
+        thread: { $ref: '#/components/schemas/InviteThread' }
+        place:
+          description: >-
+            v1.5. Where the inviter proposes to go. Always sent; null when the invite names no
+            place. Every copy is the same.
+          oneOf:
+            - $ref: '#/components/schemas/InvitePlace'
+            - type: 'null'
+
+    InvitePlace:
+      description: >-
+        v1.5. Where a meetup invite proposes to go: a restaurant (id rst_, from GET
+        /v1/restaurants), a known place (id place_, from GET /v1/places), a map pin (a label and a
+        location, no id), or words someone typed to the bot (a label alone: no id and no location).
+        Unlike Place, location may be null.
+      type: object
+      required: [id, label, location]
+      properties:
+        id:
+          type: [string, 'null']
+          description: The restaurant's (rst_) or the known place's (place_) id; null otherwise.
+          example: rst_cosmic
+        label: { type: string, example: Cosmic Cantina }
+        location:
+          description: The place's coordinates; null for a label someone typed.
+          oneOf:
+            - $ref: '#/components/schemas/LatLng'
+            - type: 'null'
+
+    NotificationType:
+      type: string
+      enum: [invite, run_open, order_update, payout, system]
+
+    Notification:
+      type: object
+      required: [id, type, title, body, data, created_at, read]
+      properties:
+        id: { type: string, description: Notification id (ntf_ prefix), example: ntf_5b2k9x }
+        type: { $ref: '#/components/schemas/NotificationType' }
+        title: { type: string }
+        body: { type: string }
+        data:
+          type: object
+          description: Free-form data for the client, for example the run_id or invite_id to open.
+        created_at: { type: string, format: date-time }
+        read: { type: boolean }
+
+    WalletTxnKind:
+      type: string
+      enum: [deposit, order_hold, refund, payout, card_funding, card_purchase]
+
+    WalletTxn:
+      type: object
+      required: [id, kind, amount_cents, description, at]
+      properties:
+        id: { type: string, description: Transaction id (txn_ prefix), example: txn_7h2d0q }
+        kind: { $ref: '#/components/schemas/WalletTxnKind' }
+        amount_cents: { type: integer, description: "Signed, from the viewer's side." }
+        description: { type: string }
+        at: { type: string, format: date-time }
+        run_id: { type: string }
+        order_id: { type: string }
+
+    WalletMode:
+      type: string
+      enum: [nessie_live, nessie_mock]
+
+    Wallet:
+      type: object
+      required: [balance_cents, account_label, mode, transactions]
+      properties:
+        balance_cents: { type: integer }
+        account_label: { type: string }
+        mode: { $ref: '#/components/schemas/WalletMode' }
+        transactions:
+          type: array
+          items: { $ref: '#/components/schemas/WalletTxn' }
+
+    ImpactScope:
+      type: string
+      enum: [me, circle, campus]
+
+    ImpactWeek:
+      type: object
+      required: [week_start, deliveries, co2_saved_g]
+      properties:
+        week_start: { type: string, format: date-time }
+        deliveries: { type: integer }
+        co2_saved_g: { type: number }
+
+    Impact:
+      type: object
+      required: [scope, deliveries, car_miles_avoided, co2_saved_g, by_week, method, includes_demo_history]
+      properties:
+        scope: { $ref: '#/components/schemas/ImpactScope' }
+        deliveries: { type: integer }
+        car_miles_avoided: { type: number }
+        co2_saved_g: { type: number }
+        by_week:
+          type: array
+          items: { $ref: '#/components/schemas/ImpactWeek' }
+        method: { type: string, example: 'EPA estimate: about 400 g CO2 per car mile avoided' }
+        includes_demo_history: { type: boolean }
+
+    PublicConfigAgent:
+      type: object
+      required: [imessage_phone_e164, display, telegram_url, telegram_add_to_group_url, whatsapp_url]
+      properties:
+        imessage_phone_e164:
+          type: [string, 'null']
+          description: >-
+            The agent's iMessage number (E.164). Null: messaging runs on Telegram and iMessage is
+            off. (When iMessage was on, Photon's shared number pool had no single number either.)
+          example: null
+        display:
+          type: string
+          description: >-
+            How to show the agent: the formatted number when imessage_phone_e164 is set, otherwise
+            the agent's display name, Ferry.
+          example: Ferry
+        telegram_url:
+          type: [string, 'null']
+          format: uri
+          description: >-
+            The bot's t.me link, https://t.me/<bot>, which opens a chat with the Ferry bot: the
+            landing page's "Text Ferry" button (on desktop, also as a QR code). Null when the
+            server has no bot configured.
+          example: 'https://t.me/Ferrygo_bot'
+        telegram_add_to_group_url:
+          type: [string, 'null']
+          format: uri
+          description: >-
+            The bot's add-to-group link, https://t.me/<bot>?startgroup=<code>: Telegram asks
+            which group to add the bot to. "Add Ferry to your group". The code is opaque; the
+            client opens the link as given. Null when the server has no bot configured.
+          example: 'https://t.me/Ferrygo_bot?startgroup=ferry'
+        whatsapp_url: { type: [string, 'null'], format: uri }
+
+    PublicConfigDownloads:
+      type: object
+      required: [macos, android, ios]
+      properties:
+        macos: { type: [string, 'null'], format: uri }
+        android: { type: [string, 'null'], format: uri }
+        ios: { type: [string, 'null'], format: uri }
+
+    PublicConfigSupabase:
+      type: object
+      required: [url, publishable_key]
+      properties:
+        url: { type: string, format: uri, example: 'https://ekhaipzpvpyigdtbedvo.supabase.co' }
+        publishable_key: { type: string }
+
+    PublicConfig:
+      type: object
+      required: [web_url, demo_mode, agent, downloads, supabase]
+      properties:
+        web_url:
+          type: string
+          format: uri
+          description: >-
+            The web app's origin. The agent's deep links are {web_url}/r/{run_id},
+            {web_url}/o/{order_id} and {web_url}/i/{invite_id}; in Telegram the bot sends them as
+            link buttons.
+          example: 'http://localhost:5173'
+        demo_mode: { type: boolean }
+        agent: { $ref: '#/components/schemas/PublicConfigAgent' }
+        downloads: { $ref: '#/components/schemas/PublicConfigDownloads' }
+        supabase:
+          oneOf:
+            - $ref: '#/components/schemas/PublicConfigSupabase'
+            - type: 'null'
+
+    # ---------- Request and response bodies ----------
+    TelegramAuthChallenge:
+      type: object
+      required: [challenge_id, bot_url, expires_at, confirm_code]
+      properties:
+        challenge_id:
+          type: string
+          description: >-
+            Opaque. The only key to the poll's token, so the client keeps it to itself; it is
+            never part of bot_url.
+        bot_url:
+          type: string
+          format: uri
+          description: >-
+            https://t.me/<bot>?start=<code>. Open it (on desktop, also show it as a QR code); the
+            user taps Start in Telegram. <code> is single use, at most 64 characters from A-Z,
+            a-z, 0-9, _ and - (Telegram's limit for a start parameter).
+          example: 'https://t.me/Ferrygo_bot?start=Q2xkZTRmY2hhbGxlbmdl'
+        expires_at:
+          type: string
+          format: date-time
+          description: After this the challenge is expired and the client starts again.
+        confirm_code:
+          type: string
+          pattern: '^[0-9]{4}$'
+          description: >-
+            Four digits (leading zeros included; show it as a string). The bot shows the same
+            code when it asks the user to confirm, so the client shows it next to bot_url or the
+            QR code: "Telegram will show 4821. Confirm only if it matches." It is not a secret
+            and is never typed anywhere.
+          example: '4821'
+
+    TelegramAuthState:
+      type: string
+      enum: [pending, verified, expired]
+
+    TelegramAuthStatus:
+      type: object
+      required: [status]
+      properties:
+        status: { $ref: '#/components/schemas/TelegramAuthState' }
+        token: { type: string }
+        user: { $ref: '#/components/schemas/User' }
+        is_new: { type: boolean, description: True when this sign-in created the account. }
+
+    DemoPersona:
+      type: string
+      enum: [judge, maya, dana, leo]
+
+    DemoSignInRequest:
+      type: object
+      required: [persona]
+      properties:
+        persona: { $ref: '#/components/schemas/DemoPersona' }
+
+    AuthSession:
+      type: object
+      required: [token, user]
+      properties:
+        token: { type: string }
+        user: { $ref: '#/components/schemas/User' }
+
+    UpdateProfileRequest:
+      type: object
+      required: [profile]
+      properties:
+        display_name: { type: string }
+        profile: { $ref: '#/components/schemas/Profile' }
+
+    MeStats:
+      type: object
+      required: [orders, runs, earned_cents, co2_saved_g]
+      properties:
+        orders: { type: integer }
+        runs: { type: integer }
+        earned_cents: { type: integer }
+        co2_saved_g: { type: number }
+
+    CreateRunRequest:
+      type: object
+      required: [restaurant_id, circle_id, leaving_at, window_minutes]
+      properties:
+        restaurant_id: { type: string, example: rst_cosmic }
+        circle_id: { type: string, example: cir_hinton4 }
+        leaving_at: { type: string, format: date-time }
+        window_minutes: { type: integer, example: 10 }
+        returning_at:
+          type: [string, 'null']
+          format: date-time
+          description: >-
+            v1.4, optional. When the runner expects to be back: after leaving_at and at most 24
+            hours after it (400 validation_failed otherwise).
+        return_place:
+          description: >-
+            v1.4, optional. Where the runner heads back to: a Place with a label (1 to 100
+            characters) and valid coordinates; an id, when given, must be one of GET /v1/places
+            (400 validation_failed otherwise).
+          oneOf:
+            - $ref: '#/components/schemas/Place'
+            - type: 'null'
+        dropoff_radius_m:
+          type: [integer, 'null']
+          minimum: 50
+          maximum: 5000
+          description: >-
+            v1.4, optional. How far from return_place, in meters, the runner will walk to hand food
+            over: 50 to 5000 (400 validation_failed otherwise). Left out or null, the run takes the
+            runner's Profile.max_dropoff_distance_m.
+          example: 400
+
+    OrderLineInput:
+      type: object
+      required: [menu_item_id, qty, choice_ids]
+      properties:
+        menu_item_id: { type: string, example: itm_cosmic_chicken_burrito }
+        qty: { type: integer, example: 1 }
+        choice_ids:
+          type: array
+          items: { type: string }
+          example: [cho_cosmic_chicken_burrito_no_beans, cho_cosmic_chicken_burrito_guac]
+        note: { type: string }
+
+    CreateOrderRequest:
+      type: object
+      required: [lines, tip_cents, dropoff]
+      properties:
+        lines:
+          type: array
+          items: { $ref: '#/components/schemas/OrderLineInput' }
+        tip_cents: { type: integer }
+        dropoff: { $ref: '#/components/schemas/Place' }
+        dropoff_radius_m:
+          type: [integer, 'null']
+          minimum: 50
+          maximum: 5000
+          description: >-
+            v1.4, optional. How far from dropoff, in meters, the customer will walk to meet the
+            runner: 50 to 5000 (400 validation_failed otherwise). Stored and echoed on the Order.
+            The server does not compare it with the run's drop-off zone; the client warns when the
+            drop-off is outside it.
+          example: 100
+
+    OrderQuote:
+      description: >-
+        What POST /v1/runs/{id}/orders would charge for the same body. total_cents is subtotal +
+        tax + ferry fee + tip.
+      type: object
+      required: [subtotal_cents, tax_cents, ferry_fee_cents, tip_cents, total_cents]
+      properties:
+        subtotal_cents: { type: integer }
+        tax_cents: { type: integer }
+        ferry_fee_cents: { type: integer }
+        tip_cents: { type: integer }
+        total_cents: { type: integer }
+
+    RunPreview:
+      description: A run's public preview, for link previews. Only these four fields.
+      type: object
+      required: [restaurant_name, runner_display_name, window_closes_at, status]
+      properties:
+        restaurant_name: { type: string, example: Cosmic Cantina }
+        runner_display_name: { type: string, example: Maya }
+        window_closes_at: { type: string, format: date-time }
+        status: { $ref: '#/components/schemas/RunStatus' }
+
+    ReceiptUpload:
+      type: object
+      required: [bucket, path, token, expires_at]
+      properties:
+        bucket: { type: string, example: receipts }
+        path: { type: string, description: Starts with the run's id., example: run_demo/receipt.jpg }
+        token: { type: string }
+        expires_at: { type: string, format: date-time }
+
+    MarkPurchasedRequest:
+      type: object
+      required: [receipt_total_cents]
+      properties:
+        receipt_total_cents: { type: integer }
+        receipt_path: { type: string, description: The path from receipt-upload. }
+
+    HandoffRequest:
+      type: object
+      properties:
+        code: { type: string, description: "The customer's 4-digit code, when the runner submits it.", example: '4829' }
+
+    CreatePickupRequest:
+      type: object
+      required: [restaurant_id, lines, tip_cents, dropoff, needed_by]
+      properties:
+        restaurant_id: { type: string, example: rst_supdogs }
+        lines:
+          type: array
+          items: { $ref: '#/components/schemas/OrderLineInput' }
+        tip_cents: { type: integer }
+        dropoff: { $ref: '#/components/schemas/Place' }
+        needed_by: { type: string, format: date-time }
+        dropoff_radius_m:
+          type: [integer, 'null']
+          minimum: 50
+          maximum: 5000
+          description: >-
+            v1.4, optional. How far from dropoff, in meters (50 to 5000), the customer will walk to
+            meet the runner. Echoed on the PickupRequest.
+          example: 100
+
+    PickupRequestStatus:
+      type: string
+      enum: [searching, matched, expired]
+
+    PickupRequest:
+      type: object
+      required: [id, status, run_id]
+      properties:
+        id: { type: string, description: Request id (req_ prefix), example: req_4n7c2v }
+        status: { $ref: '#/components/schemas/PickupRequestStatus' }
+        run_id: { type: [string, 'null'] }
+        dropoff_radius_m:
+          type: [integer, 'null']
+          minimum: 50
+          maximum: 5000
+          description: v1.4. The request's dropoff_radius_m. Always sent; null when it gave none.
+          example: 100
+
+    LocationPing:
+      type: object
+      required: [location, accuracy_m, at]
+      properties:
+        location: { $ref: '#/components/schemas/LatLng' }
+        accuracy_m: { type: number }
+        at: { type: string, format: date-time }
+
+    MeetAgainRequest:
+      type: object
+      properties:
+        message: { type: string }
+        proposed_time: { type: string, format: date-time }
+        place:
+          description: >-
+            v1.5, optional. Where to go, as a Place. With an id, the id must be a restaurant's (rst_,
+            from GET /v1/restaurants) or a known place's (place_, from GET /v1/places), and the
+            invite takes that restaurant's name or that place's label and location. Without an id,
+            the label (1 to 100 characters) and valid coordinates are kept as given. Anything else
+            is 400 validation_failed. Null or left out: no place. Echoed as Invite.place.
+          oneOf:
+            - $ref: '#/components/schemas/Place'
+            - type: 'null'
+
+    RespondInviteRequest:
+      type: object
+      required: [accept]
+      properties:
+        accept: { type: boolean }
+
+    PushKey:
+      type: object
+      required: [vapid_public_key]
+      properties:
+        vapid_public_key: { type: string }
+
+    PushPlatform:
+      type: string
+      enum: [web, ios, android]
+
+    PushSubscriptionJSON:
+      description: The browser's PushSubscription.toJSON() (W3C Push API).
+      type: object
+      properties:
+        endpoint: { type: string, format: uri }
+        expirationTime: { type: [number, 'null'] }
+        keys:
+          type: object
+          additionalProperties: { type: string }
+          description: p256dh and auth, base64url.
+
+    PushSubscribeRequest:
+      type: object
+      required: [platform]
+      properties:
+        platform: { $ref: '#/components/schemas/PushPlatform' }
+        web_push: { $ref: '#/components/schemas/PushSubscriptionJSON' }
+        token: { type: string, description: The FCM or APNs device token (native apps). }
+
+    DemoTopupRequest:
+      type: object
+      required: [amount_cents]
+      properties:
+        amount_cents: { type: integer }
+
+    # ---------- Realtime: WebSocket {API_BASE}/v1/stream?ticket=<ticket> (or ?token=<jwt>) ----------
+    StreamTicket:
+      type: object
+      required: [ticket, expires_at]
+      properties:
+        ticket: { type: string, description: 'Single use. Open {API_BASE}/v1/stream?ticket=<ticket> with it.' }
+        expires_at: { type: string, format: date-time, description: About 60 s after it was issued. }
+
+    StreamEventType:
+      type: string
+      enum: [run.updated, order.updated, runner.location, notification.created, invite.updated, wallet.updated]
+
+    StreamEnvelope:
+      description: Every server message on /v1/stream. data's shape depends on type (see the *Event schemas).
+      type: object
+      required: [type, data, at]
+      properties:
+        type: { $ref: '#/components/schemas/StreamEventType' }
+        data: { type: object }
+        at: { type: string, format: date-time }
+
+    RunUpdatedData:
+      type: object
+      required: [run]
+      properties:
+        run: { $ref: '#/components/schemas/Run' }
+
+    OrderUpdatedData:
+      type: object
+      required: [order]
+      properties:
+        order: { $ref: '#/components/schemas/Order' }
+
+    RunnerLocationData:
+      description: >-
+        Sent only to the run's runner and to customers with an active order on the run (status
+        funded, purchased or picked_up), and to nobody after delivery.
+      type: object
+      required: [run_id, location, at, eta_minutes]
+      properties:
+        run_id: { type: string, example: run_demo }
+        location: { $ref: '#/components/schemas/LatLng' }
+        at: { type: string, format: date-time }
+        eta_minutes: { type: number }
+
+    NotificationCreatedData:
+      type: object
+      required: [notification]
+      properties:
+        notification: { $ref: '#/components/schemas/Notification' }
+
+    InviteUpdatedData:
+      type: object
+      required: [invite]
+      properties:
+        invite: { $ref: '#/components/schemas/Invite' }
+
+    WalletUpdatedData:
+      type: object
+      required: [wallet]
+      properties:
+        wallet: { $ref: '#/components/schemas/Wallet' }
+
+    RunUpdatedEvent:
+      type: object
+      required: [type, data, at]
+      properties:
+        type: { type: string, enum: [run.updated] }
+        data: { $ref: '#/components/schemas/RunUpdatedData' }
+        at: { type: string, format: date-time }
+
+    OrderUpdatedEvent:
+      type: object
+      required: [type, data, at]
+      properties:
+        type: { type: string, enum: [order.updated] }
+        data: { $ref: '#/components/schemas/OrderUpdatedData' }
+        at: { type: string, format: date-time }
+
+    RunnerLocationEvent:
+      type: object
+      required: [type, data, at]
+      properties:
+        type: { type: string, enum: [runner.location] }
+        data: { $ref: '#/components/schemas/RunnerLocationData' }
+        at: { type: string, format: date-time }
+
+    NotificationCreatedEvent:
+      type: object
+      required: [type, data, at]
+      properties:
+        type: { type: string, enum: [notification.created] }
+        data: { $ref: '#/components/schemas/NotificationCreatedData' }
+        at: { type: string, format: date-time }
+
+    InviteUpdatedEvent:
+      type: object
+      required: [type, data, at]
+      properties:
+        type: { type: string, enum: [invite.updated] }
+        data: { $ref: '#/components/schemas/InviteUpdatedData' }
+        at: { type: string, format: date-time }
+
+    WalletUpdatedEvent:
+      type: object
+      required: [type, data, at]
+      properties:
+        type: { type: string, enum: [wallet.updated] }
+        data: { $ref: '#/components/schemas/WalletUpdatedData' }
+        at: { type: string, format: date-time }
+
+    ServerEvent:
+      description: Any server message on /v1/stream, discriminated by type.
+      oneOf:
+        - $ref: '#/components/schemas/RunUpdatedEvent'
+        - $ref: '#/components/schemas/OrderUpdatedEvent'
+        - $ref: '#/components/schemas/RunnerLocationEvent'
+        - $ref: '#/components/schemas/NotificationCreatedEvent'
+        - $ref: '#/components/schemas/InviteUpdatedEvent'
+        - $ref: '#/components/schemas/WalletUpdatedEvent'
+      discriminator:
+        propertyName: type
+        mapping:
+          run.updated: '#/components/schemas/RunUpdatedEvent'
+          order.updated: '#/components/schemas/OrderUpdatedEvent'
+          runner.location: '#/components/schemas/RunnerLocationEvent'
+          notification.created: '#/components/schemas/NotificationCreatedEvent'
+          invite.updated: '#/components/schemas/InviteUpdatedEvent'
+          wallet.updated: '#/components/schemas/WalletUpdatedEvent'
+
+    ClientPing:
+      description: The client sends this every 25 s.
+      type: object
+      required: [type]
+      properties:
+        type: { type: string, enum: [ping] }

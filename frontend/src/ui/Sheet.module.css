@@ -1,0 +1,109 @@
+.sheet {
+  border: none;
+  padding: 0;
+  margin: 0;
+  max-width: none;
+  max-height: none;
+  width: 100%;
+  inset: auto 0 0 0;
+  position: fixed;
+  background: transparent;
+  color: var(--ink);
+  overflow: visible;
+}
+
+.sheet::backdrop {
+  background: rgba(10, 50, 80, 0.32);
+  animation: fade var(--t-sheet) var(--ease-out);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  max-height: min(92dvh, 760px);
+  background: var(--panel-solid);
+  border-radius: var(--r-panel) var(--r-panel) 0 0;
+  box-shadow: var(--shadow-lift);
+  padding-bottom: var(--safe-bottom);
+  animation: rise var(--t-sheet) var(--ease-out);
+}
+
+.sheet[open] {
+  display: block;
+}
+
+.handle {
+  width: 40px;
+  height: 5px;
+  margin: 10px auto 2px;
+  border-radius: var(--r-pill);
+  background: rgba(15, 46, 68, 0.2);
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--gutter) var(--space-2);
+}
+
+.close {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  margin: -6px -10px 0 0;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: var(--ink-2);
+}
+
+.content {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0 var(--gutter) var(--space-4);
+}
+
+.footer {
+  padding: var(--space-3) var(--gutter) var(--space-4);
+  border-top: 1px solid var(--line);
+  background: var(--panel-solid);
+}
+
+/* Landscape phones and desktop: a centered dialog instead of a bottom sheet. */
+@media (min-width: 720px), (max-height: 500px) and (min-aspect-ratio: 3/2) {
+  .sheet {
+    inset: 0;
+    margin: auto;
+    width: min(520px, calc(100vw - 32px));
+    height: fit-content;
+  }
+  .body {
+    border-radius: var(--r-panel);
+    max-height: min(88dvh, 760px);
+    padding-bottom: 0;
+  }
+  .handle {
+    display: none;
+  }
+}
+
+@keyframes rise {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+}
+
+:global(html:has(dialog[open])) {
+  overflow: hidden;
+}

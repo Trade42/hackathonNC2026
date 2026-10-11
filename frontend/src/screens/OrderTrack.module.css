@@ -1,0 +1,361 @@
+/* Phone portrait: the map stays put and the details slide up over it as a
+   bottom sheet, like every delivery app's tracker. */
+.layout {
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+
+.mapPane {
+  position: sticky;
+  top: calc(var(--topbar-h) + var(--safe-top));
+  z-index: 0;
+  height: 54dvh;
+  min-height: 280px;
+  max-height: 560px;
+}
+
+.mapChip {
+  position: absolute;
+  left: var(--gutter);
+  right: var(--gutter);
+  bottom: 44px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 8px 14px;
+  border-radius: var(--r-pill);
+}
+
+.mapChip strong {
+  font-weight: 600;
+}
+
+.chipText {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  line-height: 1.3;
+}
+
+.chipText span {
+  font-size: var(--fs-xs);
+  color: var(--ink-2);
+}
+
+.eta {
+  font-size: var(--fs-xl);
+  font-weight: 300;
+  white-space: nowrap;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  width: 100%;
+  max-width: var(--content-max);
+  min-height: 60dvh;
+  margin: -28px auto 0;
+  padding: 30px var(--gutter) 0;
+  display: grid;
+  grid-auto-rows: max-content;
+  gap: var(--space-4);
+  align-content: start;
+  border-radius: 28px 28px 0 0;
+  background: linear-gradient(180deg, rgba(246, 251, 255, 0.97), #f2f9fe 240px);
+  box-shadow: 0 -14px 34px rgba(16, 82, 128, 0.18);
+  animation: sheetUp 0.55s var(--ease-rise) both;
+}
+
+/* the grab handle */
+.content::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  width: 40px;
+  height: 5px;
+  translate: -50% 0;
+  border-radius: 5px;
+  background: #c3d6e4;
+}
+
+@keyframes sheetUp {
+  from {
+    transform: translateY(40px);
+    opacity: 0.6;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+.who {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+  padding: var(--space-3);
+  border-radius: var(--r-inner);
+  background: var(--sky-50);
+  font-size: var(--fs-sm);
+}
+.who > span:last-child {
+  flex: 1;
+  min-width: 0;
+}
+
+/* The sky over the status changes with the order: it shows real progress. */
+.status {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.status::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 6px;
+  background: linear-gradient(90deg, #7cc8f2, #bfe6fa);
+}
+
+.status[data-tone='moving']::before {
+  background: linear-gradient(90deg, #1e8fd6, #39c6da);
+}
+
+.status[data-tone='done']::before {
+  background: linear-gradient(90deg, #5cc24a, #2e9a3b);
+}
+
+.status h1 {
+  font-size: var(--fs-xl);
+}
+
+.timeline {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-1);
+  margin-top: var(--space-3);
+}
+
+.step {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  text-align: center;
+  font-size: var(--fs-xs);
+  color: var(--ink-2);
+  position: relative;
+}
+
+.step::before {
+  content: '';
+  position: absolute;
+  top: 13px;
+  left: calc(-50% + 16px);
+  right: calc(50% + 16px);
+  height: 3px;
+  border-radius: 2px;
+  background: #d6e6f0;
+}
+
+.step:first-child::before {
+  display: none;
+}
+
+.step[data-done='true']::before {
+  background: var(--sky-500);
+}
+
+.dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #e5eef4;
+  border: 2px solid #fff;
+  color: var(--ink-3);
+  box-shadow: inset 0 -2px 4px rgba(16, 82, 128, 0.12);
+}
+
+.step[data-done='true'] .dot {
+  color: #fff;
+  background: radial-gradient(circle at 32% 28%, #fff 0 10%, transparent 34%), linear-gradient(180deg, #2aa0e8, #0e6cad);
+}
+
+.step[data-current='true'] .dot {
+  box-shadow: 0 0 0 5px rgba(30, 143, 214, 0.22);
+}
+
+.step[data-current='true'] {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.code {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+  text-align: center;
+}
+
+.codeDigits {
+  display: flex;
+  gap: 8px;
+}
+
+.codeDigits span {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 64px;
+  border-radius: var(--r-inner);
+  background: #fff;
+  border: 1px solid rgba(10, 94, 147, 0.3);
+  font-size: var(--fs-2xl);
+  font-weight: 600;
+  box-shadow: inset 0 -3px 6px rgba(30, 143, 214, 0.12);
+}
+
+.receipt {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.receiptThumb {
+  position: relative;
+  width: 72px;
+  height: 92px;
+  flex: none;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--r-inner);
+  overflow: hidden;
+  background: var(--sky-50);
+}
+
+.receiptThumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.receiptFull {
+  width: 100%;
+  height: auto;
+  border-radius: var(--r-inner);
+}
+
+.lines {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.lines li {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.totals {
+  display: grid;
+  gap: 4px;
+  margin: var(--space-3) 0 0;
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--line);
+}
+
+.totals > div {
+  display: flex;
+  justify-content: space-between;
+}
+
+.totals dt {
+  color: var(--ink-2);
+}
+
+.totals dd {
+  margin: 0;
+}
+
+.grand {
+  font-weight: 600;
+  font-size: var(--fs-lg);
+}
+
+.grand dt {
+  color: var(--ink) !important;
+}
+
+.placed {
+  border: 2px solid var(--sky-700);
+}
+
+/* Phone landscape: map and sheet side by side. */
+@media (max-height: 500px) and (min-aspect-ratio: 3/2) {
+  .layout {
+    grid-template-rows: none;
+    grid-template-columns: 55fr 45fr;
+    height: calc(100dvh - var(--topbar-h) - var(--safe-top) - var(--space-4));
+  }
+  .mapPane {
+    height: 100%;
+    max-height: none;
+    min-height: 0;
+  }
+  .mapPane {
+    position: relative;
+    top: auto;
+  }
+  .content {
+    margin: 0;
+    padding-top: var(--space-4);
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    min-height: 0;
+    animation: none;
+    overflow-y: auto;
+    height: 100%;
+    padding-bottom: var(--space-5);
+  }
+}
+
+/* Desktop: details on the left, the map as a full-height pane on the right. */
+@media (min-width: 1024px) and (min-height: 501px) {
+  .layout {
+    grid-template-rows: none;
+    grid-template-columns: minmax(380px, 520px) 1fr;
+    min-height: calc(100dvh - var(--topbar-h));
+  }
+  .mapPane {
+    order: 2;
+    position: sticky;
+    top: calc(var(--topbar-h) + var(--safe-top));
+    height: calc(100dvh - var(--topbar-h) - var(--safe-top));
+    max-height: none;
+  }
+  .content {
+    margin: 0 auto;
+    padding-top: var(--space-5);
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+    min-height: 0;
+    animation: none;
+    padding-bottom: var(--space-6);
+  }
+}
+
+/* Side-by-side layouts (phone landscape, desktop) don't need the sheet handle. */
+@media (max-height: 500px) and (min-aspect-ratio: 3/2), (min-width: 1024px) and (min-height: 501px) {
+  .content::before {
+    display: none;
+  }
+}

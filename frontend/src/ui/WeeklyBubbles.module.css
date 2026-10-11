@@ -1,0 +1,86 @@
+.wrap {
+  position: relative;
+}
+
+.svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.grid line {
+  stroke: #dde9f0;
+  stroke-width: 1;
+}
+
+.tick {
+  fill: var(--ink-2);
+  font-size: 11px;
+}
+
+.bubble {
+  cursor: pointer;
+  outline: none;
+}
+
+.bubble circle.hit {
+  fill: transparent;
+}
+
+.bubble:focus-visible circle.mark {
+  stroke: var(--sky-700);
+  stroke-width: 3;
+}
+
+.label {
+  fill: var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.tooltip {
+  position: absolute;
+  z-index: 3;
+  pointer-events: none;
+  padding: 6px 10px;
+  border-radius: 10px;
+  background: var(--panel-solid);
+  box-shadow: var(--shadow-lift);
+  font-size: var(--fs-sm);
+  white-space: nowrap;
+  translate: -50% calc(-100% - 10px);
+}
+
+.tooltip strong {
+  display: block;
+  font-weight: 600;
+}
+
+.tableToggle {
+  border: none;
+  background: none;
+  padding: 0;
+  min-height: 44px;
+  color: var(--sky-700);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+}
+
+.table th,
+.table td {
+  text-align: left;
+  padding: 6px 4px;
+  border-bottom: 1px solid var(--line);
+}
+
+.table td:last-child,
+.table th:last-child {
+  text-align: right;
+}

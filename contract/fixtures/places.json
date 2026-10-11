@@ -1,0 +1,38 @@
+[
+  {
+    "id": "place_fetzer",
+    "label": "Fetzer Gym (HackNC)",
+    "location": {
+      "lat": 35.909152,
+      "lng": -79.046905
+    },
+    "note": "HackNC venue."
+  },
+  {
+    "id": "place_hinton",
+    "label": "Hinton James lobby",
+    "location": {
+      "lat": 35.902364,
+      "lng": -79.043231
+    },
+    "note": "Main lobby."
+  },
+  {
+    "id": "place_davis",
+    "label": "Davis Library steps",
+    "location": {
+      "lat": 35.910957,
+      "lng": -79.047906
+    },
+    "note": "Front steps."
+  },
+  {
+    "id": "place_ehaus",
+    "label": "Ehringhaus lobby",
+    "location": {
+      "lat": 35.904385,
+      "lng": -79.042914
+    },
+    "note": "Main lobby."
+  }
+]

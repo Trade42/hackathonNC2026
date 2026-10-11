@@ -1,0 +1,148 @@
+.gel {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 22px;
+  border-radius: var(--r-pill);
+  border: 1px solid #06507f;
+  color: #fff;
+  font-weight: 600;
+  font-size: var(--fs-md);
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  background: linear-gradient(180deg, #6cc4f2 0%, #1679bd 30%, #0e6cad 50%, #085c96 50%, #0e74b8 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.75),
+    inset 0 10px 14px rgba(255, 255, 255, 0.18),
+    0 4px 10px rgba(8, 92, 150, 0.3);
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  transition:
+    transform var(--t-tap) var(--ease-out),
+    box-shadow var(--t-tap) var(--ease-out);
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+/* Specular highlight across the top of the gel. */
+.gel::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  left: 7%;
+  right: 7%;
+  top: 2px;
+  height: 44%;
+  border-radius: 999px 999px 60% 60% / 999px 999px 40% 40%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.06));
+  pointer-events: none;
+}
+
+@media (hover: hover) {
+  .gel:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.8),
+      inset 0 10px 14px rgba(255, 255, 255, 0.22),
+      0 7px 16px rgba(8, 92, 150, 0.32);
+  }
+}
+
+.gel:active:not(:disabled) {
+  transform: translateY(1px) scale(0.98);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 3px 8px rgba(0, 40, 80, 0.25),
+    0 1px 3px rgba(8, 92, 150, 0.3);
+}
+
+.white {
+  color: var(--ink);
+  border-color: rgba(10, 94, 147, 0.35);
+  background: linear-gradient(180deg, #ffffff 0%, #f8fcff 50%, #e6f4fc 50%, #f3faff 100%);
+  text-shadow: 0 1px 0 #fff;
+  box-shadow:
+    inset 0 1px 0 #fff,
+    0 3px 8px rgba(16, 82, 128, 0.16);
+}
+
+.eco {
+  border-color: #145a1d;
+  background: linear-gradient(180deg, #7fd36f 0%, #22802f 30%, #1e6e28 50%, #17611f 50%, #237a2e 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    inset 0 10px 14px rgba(255, 255, 255, 0.16),
+    0 4px 10px rgba(23, 97, 31, 0.3);
+}
+
+.danger {
+  color: var(--danger);
+  border-color: rgba(163, 40, 27, 0.35);
+  background: linear-gradient(180deg, #ffffff 0%, #fff8f7 50%, #fbe9e6 50%, #fff4f2 100%);
+  text-shadow: none;
+  box-shadow:
+    inset 0 1px 0 #fff,
+    0 3px 8px rgba(163, 40, 27, 0.12);
+}
+
+.sm {
+  min-height: 44px;
+  padding: 0 16px;
+  font-size: var(--fs-sm);
+}
+
+.lg {
+  min-height: 56px;
+  padding: 0 28px;
+  font-size: var(--fs-lg);
+}
+
+.block {
+  display: flex;
+  width: 100%;
+}
+
+.gel:disabled,
+.gel[aria-disabled='true'] {
+  cursor: not-allowed;
+  color: var(--ink-3);
+  border-color: #c3d6e2;
+  background: #d6e6f0;
+  text-shadow: none;
+  box-shadow: none;
+}
+.gel:disabled::before,
+.gel[aria-disabled='true']::before {
+  display: none;
+}
+
+.busy {
+  pointer-events: none;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  animation: spin 700ms linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (forced-colors: active) {
+  .gel {
+    border: 2px solid ButtonText;
+  }
+}

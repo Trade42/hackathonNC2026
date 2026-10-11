@@ -1,0 +1,39 @@
+[package]
+name = "ferry-core"
+edition.workspace = true
+version.workspace = true
+publish.workspace = true
+
+[dependencies]
+axum = { version = "0.8.9", features = ["ws", "macros"] }
+tokio = { version = "1.53", features = ["macros", "rt-multi-thread", "signal", "net", "time", "sync"] }
+sqlx = { version = "0.9.0", default-features = false, features = ["postgres", "runtime-tokio", "tls-rustls-aws-lc-rs", "migrate", "macros", "json"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+reqwest = { version = "0.13.5", default-features = false, features = ["rustls", "json"] }
+jsonwebtoken = { version = "11.1.0", default-features = false, features = ["aws_lc_rs"] }
+tower-http = { version = "0.7.1", features = ["cors", "trace", "compression-gzip"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3.23", features = ["env-filter", "fmt"] }
+dotenvy = "0.15.7"
+url = "2.5"
+rand = "0.10"
+thiserror = "2"
+anyhow = "1"
+# Keyed hashes of texted sign-in codes (both already in the lock through sqlx).
+hmac = "0.13.0"
+sha2 = { version = "0.11.0", default-features = false }
+# Web Push: RFC 8291 encryption (ECDH P-256, HKDF, AES-128-GCM) and VAPID's ES256 signature, and
+# base64url for the keys (both already in the lock through rustls and sqlx).
+aws-lc-rs = "1.18.1"
+base64 = "0.22.1"
+
+[dev-dependencies]
+ctor = "1.0.13"
+tower = { version = "0.5", features = ["util"] }
+http-body-util = "0.1"
+# The realtime tests: a WebSocket client, and events validated against contract/openapi.yaml.
+futures-util = { version = "0.3.34", default-features = false, features = ["sink"] }
+jsonschema = { version = "0.58.6", default-features = false }
+serde_norway = "0.9.42"
+tokio-tungstenite = "0.29.0"

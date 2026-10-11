@@ -1,0 +1,57 @@
+.card {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.from {
+  display: flex;
+  gap: var(--space-4);
+  align-items: center;
+}
+
+.from h1 {
+  font-size: var(--fs-xl);
+}
+
+.message {
+  font-size: var(--fs-lg);
+}
+
+.responses {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.responses li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.responses li span:nth-child(2) {
+  flex: 1;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.thread {
+  display: grid;
+  gap: var(--space-3);
+  justify-items: start;
+  border: 2px solid var(--sky-700);
+}
+
+.thread h2 {
+  font-size: var(--fs-lg);
+}
+
+.qr {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}

@@ -1,0 +1,291 @@
+/* Delivery feed pieces: restaurant cards, the run carousel, the live order card. */
+
+.restList {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.restaurant {
+  animation: rise 0.5s var(--ease-rise) both;
+}
+.restaurant:nth-child(2) {
+  animation-delay: 50ms;
+}
+.restaurant:nth-child(3) {
+  animation-delay: 100ms;
+}
+.restaurant:nth-child(n + 4) {
+  animation-delay: 150ms;
+}
+
+.restLink {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 10px;
+  border-radius: var(--r-panel);
+  color: inherit;
+  text-decoration: none;
+  background: var(--panel);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow: var(--shadow-panel);
+  transition:
+    transform var(--t-tap) var(--ease-out),
+    box-shadow var(--t-ui) var(--ease-out);
+}
+.restLink:active {
+  transform: scale(0.985);
+}
+@media (hover: hover) {
+  .restLink:hover {
+    box-shadow: var(--shadow-lift);
+  }
+}
+
+.restImg {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  object-fit: cover;
+  flex: none;
+}
+
+.restMain {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+.restMain h3 {
+  font-size: var(--fs-md);
+}
+.meta {
+  color: var(--ink-2);
+  font-size: var(--fs-sm);
+}
+.open {
+  font-size: var(--fs-sm);
+  color: var(--sky-700);
+  font-weight: 700;
+}
+.closed {
+  font-size: var(--fs-sm);
+  color: var(--ink-3);
+}
+
+.going {
+  justify-self: start;
+  margin-top: 4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px 4px 4px;
+  border-radius: var(--r-pill);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--sky-700);
+  background: var(--sky-50);
+  box-shadow: inset 0 0 0 1px rgba(30, 143, 214, 0.3);
+  white-space: nowrap;
+}
+
+/* ---------- run carousel ---------- */
+
+.carousel {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(220px, 72%);
+  gap: var(--space-3);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--gutter);
+  margin-inline: calc(-1 * var(--gutter));
+  padding: 4px var(--gutter) 14px;
+  scrollbar-width: none;
+}
+.carousel::-webkit-scrollbar {
+  display: none;
+}
+@media (min-width: 600px) {
+  .carousel {
+    grid-auto-columns: 260px;
+  }
+}
+
+.runItem {
+  scroll-snap-align: start;
+  animation: rise 0.5s var(--ease-rise) both;
+}
+.runItem:nth-child(2) {
+  animation-delay: 70ms;
+}
+.runItem:nth-child(n + 3) {
+  animation-delay: 140ms;
+}
+
+.runLink {
+  display: grid;
+  height: 100%;
+  overflow: hidden;
+  border-radius: var(--r-panel);
+  color: inherit;
+  text-decoration: none;
+  background: var(--panel);
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  box-shadow: var(--shadow-panel);
+  transition: transform var(--t-tap) var(--ease-out);
+}
+.runLink:active {
+  transform: scale(0.98);
+}
+
+.runArt {
+  position: relative;
+}
+
+.chip {
+  position: absolute;
+  z-index: 2;
+  right: 10px;
+  top: 10px;
+  padding: 4px 10px;
+  border-radius: var(--r-pill);
+  font-size: var(--fs-xs);
+  font-weight: 700;
+  color: var(--sky-700);
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 2px 6px rgba(16, 82, 128, 0.15);
+}
+.chipWarn {
+  color: var(--warn);
+}
+
+.runBody {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px 12px;
+}
+.runText {
+  min-width: 0;
+  display: grid;
+}
+.runBody h3 {
+  font-size: var(--fs-md);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.runBody p {
+  color: var(--ink-2);
+  font-size: var(--fs-sm);
+}
+
+/* ---------- live order card ---------- */
+
+.live {
+  position: relative;
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  border-radius: var(--r-panel);
+  overflow: hidden;
+  color: #fff;
+  text-decoration: none;
+  background: linear-gradient(135deg, #0a5e93 0%, #1679bd 45%, #1e9cc9 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 14px 30px -12px rgba(10, 94, 147, 0.7);
+  transition: transform var(--t-tap) var(--ease-out);
+}
+.live::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 55% 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0));
+  pointer-events: none;
+}
+.live:active {
+  transform: scale(0.985);
+}
+.liveTop {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.liveText {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+}
+.liveTop strong {
+  font-family: var(--font-sub);
+  font-weight: 600;
+  font-size: var(--fs-lg);
+  line-height: 1.2;
+}
+.liveTop small {
+  opacity: 0.9;
+  font-size: var(--fs-sm);
+}
+.eta {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  line-height: 1;
+  white-space: nowrap;
+}
+.eta small {
+  font-family: var(--font);
+  font-size: var(--fs-sm);
+  margin-left: 2px;
+}
+.steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+}
+.steps span {
+  position: relative;
+  height: 5px;
+  border-radius: 5px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.3);
+}
+.steps span[data-on='true'] {
+  background: #fff;
+}
+/* the step in progress shimmers */
+.steps span[data-now='true']::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9), transparent);
+  animation: shimmer 1.6s var(--ease-float) infinite;
+}
+.stepLabels {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  font-size: 0.72rem;
+  opacity: 0.9;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.plan {
+  color: var(--sky-700) !important;
+  font-weight: 700;
+}
+.count {
+  font-size: var(--fs-xs) !important;
+}

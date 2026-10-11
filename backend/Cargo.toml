@@ -1,0 +1,15 @@
+[workspace]
+members = ["ferry-core"]
+resolver = "3"
+
+[workspace.package]
+edition = "2024"
+version = "0.1.0"
+publish = false
+
+# Disk is tight: line tables only for our code, no debug info for dependencies.
+[profile.dev]
+debug = "line-tables-only"
+
+[profile.dev.package."*"]
+debug = false

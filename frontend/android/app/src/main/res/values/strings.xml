@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Ferry</string>
+    <string name="title_activity_main">Ferry</string>
+    <string name="package_name">app.ferry.hacknc</string>
+    <string name="custom_url_scheme">app.ferry.hacknc</string>
+</resources>

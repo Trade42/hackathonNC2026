@@ -1,0 +1,125 @@
+.head {
+  display: flex;
+  gap: var(--space-4);
+  align-items: center;
+}
+
+.headText {
+  display: grid;
+  gap: 2px;
+}
+
+.headText h1 {
+  font-size: var(--fs-xl);
+}
+
+.state {
+  font-weight: 600;
+  color: var(--sky-700);
+}
+
+.h2 {
+  font-size: var(--fs-lg);
+  margin-bottom: var(--space-2);
+}
+
+.list {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.list li {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.qty {
+  flex: none;
+  min-width: 36px;
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  color: var(--sky-700);
+}
+
+.itemMain {
+  display: grid;
+}
+
+.itemMain strong {
+  font-weight: 600;
+}
+
+.itemMain span {
+  font-size: var(--fs-sm);
+  color: var(--ink-2);
+}
+
+.noteText {
+  font-style: italic;
+}
+
+.stops {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.stopHead {
+  display: flex;
+  gap: var(--space-3);
+  align-items: center;
+  margin-bottom: var(--space-2);
+}
+
+.stopHead div {
+  display: grid;
+}
+
+.stopHead span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--fs-sm);
+  color: var(--ink-2);
+}
+
+.codeForm {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-end;
+  flex-wrap: wrap;
+}
+
+.codeForm > div {
+  flex: 1;
+  min-width: 140px;
+}
+
+.done {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  font-weight: 600;
+  color: var(--leaf-700);
+}
+
+.photo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.thumb {
+  width: 56px;
+  height: 72px;
+  padding: 0;
+  border-radius: var(--r-inner);
+  overflow: hidden;
+  border: 1px solid var(--line);
+}
+
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

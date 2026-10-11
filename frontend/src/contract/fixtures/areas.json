@@ -1,0 +1,26 @@
+[
+  {
+    "id": "area_franklin",
+    "name": "Franklin St",
+    "center": {
+      "lat": 35.9132,
+      "lng": -79.0558
+    }
+  },
+  {
+    "id": "area_campus",
+    "name": "Campus",
+    "center": {
+      "lat": 35.9095,
+      "lng": -79.0479
+    }
+  },
+  {
+    "id": "area_carrboro",
+    "name": "Carrboro",
+    "center": {
+      "lat": 35.9101,
+      "lng": -79.0753
+    }
+  }
+]

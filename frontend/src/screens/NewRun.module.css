@@ -1,0 +1,36 @@
+.typed {
+  max-width: 16rem;
+}
+
+.time {
+  color: var(--ink-2);
+}
+.time strong {
+  color: var(--ink-display);
+  font-family: var(--font-sub);
+}
+
+.preview {
+  display: grid;
+  gap: var(--space-2);
+}
+.preview h2 {
+  font-size: var(--fs-md);
+}
+.previewCard {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  padding: var(--space-4);
+  border-radius: var(--r-panel);
+  background: linear-gradient(180deg, #eaf7fe, #d9f1fc);
+  border: 1px solid rgba(30, 143, 214, 0.3);
+}
+.previewCard p {
+  flex: 1;
+  min-width: 0;
+}
+
+.circle {
+  color: var(--ink-display);
+}

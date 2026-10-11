@@ -1,0 +1,385 @@
+/* Aero scenery. Every animated layer is its own composited element; nothing
+   animates a filter, a size or a position. Loops stop under reduced motion
+   (base.css shortens every animation to 1 ms). */
+
+.scene {
+  --px: 0;
+  --py: 0;
+  --land-h: clamp(250px, 40vh, 440px);
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+  contain: strict;
+}
+
+.defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+.sky {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #ffffff 0%, #fafdff 20%, #e6f4fd 34%, #bfe2f8 50%, #93cff3 64%, #78c2ef 100%);
+}
+
+/* soft daylight bloom in the upper corner */
+.sun {
+  position: absolute;
+  width: 70vmax;
+  height: 70vmax;
+  left: -18vmax;
+  top: -34vmax;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.6) 35%, rgba(255, 255, 255, 0) 70%);
+  animation: breathe 14s var(--ease-float) infinite alternate;
+}
+
+@keyframes breathe {
+  from {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  to {
+    transform: scale(1.08);
+    opacity: 1;
+  }
+}
+
+/* ---------- clouds ---------- */
+
+.clouds {
+  position: absolute;
+  inset: 0;
+  transform: translate3d(calc(var(--px) * -10px), calc(var(--py) * -6px), 0);
+  transition: transform 1.2s var(--ease-out);
+}
+
+.cloud {
+  position: absolute;
+  will-change: transform;
+  animation:
+    cloudIn 1.6s var(--ease-rise) both,
+    drift var(--drift, 120s) var(--ease-float) infinite alternate;
+}
+
+.cloud svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+@keyframes cloudIn {
+  from {
+    opacity: 0;
+    translate: 0 18px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(var(--drift-x, 60px), 0, 0);
+  }
+}
+
+.cHighL {
+  width: clamp(160px, 18vw, 320px);
+  left: 6%;
+  top: 14%;
+  opacity: 0.7;
+  --drift: 160s;
+  --drift-x: 90px;
+}
+.cBackL {
+  width: clamp(240px, 30vw, 560px);
+  left: 12%;
+  top: 46%;
+  --drift: 140s;
+  --drift-x: 70px;
+}
+.cBackR {
+  width: clamp(240px, 28vw, 520px);
+  right: 14%;
+  top: 44%;
+  --drift: 130s;
+  --drift-x: -60px;
+}
+.cFrontL {
+  width: clamp(320px, 44vw, 820px);
+  left: -9%;
+  top: 33%;
+  --drift: 110s;
+  --drift-x: 50px;
+}
+.cFrontR {
+  width: clamp(300px, 40vw, 760px);
+  right: -10%;
+  top: 36%;
+  --drift: 100s;
+  --drift-x: -50px;
+}
+
+/* Phones: keep the clouds below the hero copy so text sits on clear sky. */
+@media (max-width: 767px) {
+  .cHighL {
+    display: none;
+  }
+  .cBackL,
+  .cBackR {
+    top: 58%;
+  }
+  .cFrontL {
+    top: 54%;
+    left: -30%;
+  }
+  .cFrontR {
+    top: 57%;
+    right: -34%;
+  }
+}
+
+@media (max-height: 500px) and (min-aspect-ratio: 3/2) {
+  .scene {
+    --land-h: 30vh;
+  }
+  .cHighL,
+  .cBackL,
+  .cBackR {
+    display: none;
+  }
+  .cFrontL {
+    top: 46%;
+    width: 34vw;
+  }
+  .cFrontR {
+    top: 48%;
+    width: 32vw;
+  }
+}
+
+/* ---------- land ---------- */
+
+.landWrap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--land-h);
+}
+
+.land {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+}
+
+.glints,
+.glints2 {
+  animation: glint 7s var(--ease-float) infinite alternate;
+}
+.glints2 {
+  animation-duration: 5s;
+  animation-delay: -2s;
+}
+
+@keyframes glint {
+  0% {
+    transform: translateX(0);
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-34px);
+    opacity: 0.5;
+  }
+}
+
+.boatPath {
+  animation: sail 70s linear infinite;
+}
+
+@keyframes sail {
+  from {
+    transform: translate(1640px, 210px);
+  }
+  to {
+    transform: translate(960px, 236px);
+  }
+}
+
+.boat {
+  transform-box: fill-box;
+  transform-origin: 50% 80%;
+  animation: bob 3.2s var(--ease-float) infinite alternate;
+}
+
+@keyframes bob {
+  from {
+    transform: translateY(-1.5px) rotate(-2deg);
+  }
+  to {
+    transform: translateY(1.5px) rotate(2deg);
+  }
+}
+
+.sparkle {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: twinkle 3.6s var(--ease-float) infinite;
+  opacity: 0;
+}
+
+@keyframes twinkle {
+  0%,
+  70%,
+  100% {
+    opacity: 0;
+    scale: 0.4;
+  }
+  82% {
+    opacity: 0.95;
+    scale: 1;
+  }
+}
+
+.tufts {
+  position: absolute;
+  bottom: -4px;
+  width: clamp(120px, 16vw, 240px);
+  height: auto;
+}
+.tuftsL {
+  left: -10px;
+}
+.tuftsR {
+  right: -10px;
+  transform: scaleX(-1);
+}
+
+.blade {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  animation: sway 5s var(--ease-float) infinite alternate;
+}
+
+@keyframes sway {
+  from {
+    transform: rotate(-3deg);
+  }
+  to {
+    transform: rotate(3.5deg);
+  }
+}
+
+/* ---------- gulls ---------- */
+
+.gulls {
+  position: absolute;
+  top: 22%;
+  left: 0;
+  display: flex;
+  gap: 18px;
+  align-items: flex-end;
+  animation: fly 90s linear infinite;
+  will-change: transform;
+}
+
+@keyframes fly {
+  from {
+    transform: translate3d(-20vw, 0, 0);
+  }
+  to {
+    transform: translate3d(110vw, -6vh, 0);
+  }
+}
+
+.gull {
+  width: 18px;
+  height: 8px;
+  animation: flap 0.9s var(--ease-float) infinite alternate;
+}
+.gull:nth-child(2) {
+  width: 14px;
+  margin-bottom: 10px;
+}
+.gull:nth-child(3) {
+  width: 12px;
+  margin-bottom: 4px;
+}
+
+@keyframes flap {
+  from {
+    transform: scaleY(1);
+  }
+  to {
+    transform: scaleY(0.45);
+  }
+}
+
+/* ---------- halftone print texture over the lower sky ---------- */
+
+.halftone {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(70, 120, 170, 0.16) 0.7px, transparent 1px);
+  background-size: 4px 4px;
+  -webkit-mask-image: linear-gradient(180deg, transparent 32%, #000 62%, rgba(0, 0, 0, 0.5) 100%);
+  mask-image: linear-gradient(180deg, transparent 32%, #000 62%, rgba(0, 0, 0, 0.5) 100%);
+  mix-blend-mode: multiply;
+}
+
+/* ---------- compact: the app backdrop ---------- */
+
+.compact {
+  position: fixed;
+  --land-h: clamp(110px, 20vh, 200px);
+  z-index: -1;
+}
+
+.compact .sky {
+  background: linear-gradient(180deg, #f4faff 0%, #e8f5fe 40%, #c7e6fa 72%, #9fd5f4 100%);
+}
+
+.compact .cBackL {
+  top: auto;
+  bottom: calc(var(--land-h) - 30px);
+  left: -6%;
+  width: clamp(200px, 30vw, 460px);
+}
+
+.compact .cFrontR {
+  top: auto;
+  bottom: calc(var(--land-h) - 46px);
+  right: -8%;
+  width: clamp(220px, 32vw, 520px);
+}
+
+.compact .halftone {
+  opacity: 0.6;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .halftone {
+    display: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .scene {
+    display: none;
+  }
+}

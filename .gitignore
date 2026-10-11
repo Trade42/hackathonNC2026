@@ -1,0 +1,27 @@
+# Rust
+target/
+
+# Node and Bun
+node_modules/
+dist/
+
+# Secrets: the single root .env and any variant. .env.example is tracked.
+.env
+.env.*
+!.env.example
+sshfile.txt
+
+# Local MCP config
+.mcp.json
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Editor junk
+.idea/
+.vscode/
+*.swp
+
+# Logs
+*.log

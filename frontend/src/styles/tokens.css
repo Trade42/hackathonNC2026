@@ -1,0 +1,105 @@
+/* Ferry tokens. Values and contrast ratios are documented in docs/DESIGN.md. */
+:root {
+  color-scheme: light;
+
+  --ink: #0f2e44;
+  --ink-2: #3a5b72;
+  --ink-3: #4d6578;
+  --sky-700: #0a5e93;
+  --sky-600: #0e6cad;
+  --sky-500: #1e8fd6;
+  --sky-300: #7cc8f2;
+  --sky-200: #bfe6fa;
+  --sky-100: #d9f1fc;
+  --sky-50: #eaf7fe;
+  --aqua-400: #39c6da;
+  --aqua-600: #1e9cc9;
+  --leaf-700: #1c6b2a;
+  --leaf-500: #5cc24a;
+  --leaf-50: #eef9e9;
+  --danger: #a3281b;
+  --danger-50: #fdeeec;
+  --warn: #8a5a00;
+  --white: #fdfeff;
+  --panel: rgba(255, 255, 255, 0.94);
+  --panel-solid: #fbfeff;
+  --line: rgba(15, 46, 68, 0.12);
+
+  /* Scenery only (hills, sea, headline ink). Leaf green stays reserved for CO2. */
+  --ink-display: #142a52;
+  --ink-pale: #a9b3d6;
+  --grass-300: #9bdb4d;
+  --grass-500: #5db82e;
+  --grass-700: #2f7d1e;
+  --sea-300: #6fd6e8;
+  --sea-600: #168fc0;
+  --sky-top: #ffffff;
+
+  --sky-backdrop: linear-gradient(180deg, #f6fbff 0%, #eaf6fe 45%, #d3ecfb 100%);
+  --water: linear-gradient(180deg, #5fd0e2 0%, #1e9cc9 55%, #0c6fa0 100%);
+
+  --shadow-panel: inset 0 1px 0 #fff, 0 10px 30px rgba(16, 82, 128, 0.12);
+  --shadow-lift: inset 0 1px 0 #fff, 0 16px 40px rgba(16, 82, 128, 0.18);
+  --shadow-chrome: inset 0 1px 0 #fff, 0 8px 24px rgba(16, 82, 128, 0.14);
+
+  --font: 'PT Sans', 'PT Sans Fallback', Tahoma, system-ui, sans-serif;
+  --font-sub: 'Exo 2', 'Exo 2 Fallback', 'Trebuchet MS', system-ui, sans-serif;
+  --font-display: 'Instrument Serif', 'Instrument Serif Fallback', Georgia, 'Times New Roman', serif;
+  --fs-hero: clamp(2.9rem, 7.4vw, 5.6rem);
+  --fs-display: clamp(2.2rem, 4.6vw, 3.6rem);
+  --fs-xs: 0.8rem;
+  --fs-sm: 0.875rem;
+  --fs-md: 1rem;
+  --fs-lg: 1.25rem;
+  --fs-xl: 1.5625rem;
+  --fs-2xl: 1.953rem;
+  --fs-3xl: 2.441rem;
+  --fs-4xl: 3.052rem;
+
+  --r-pill: 999px;
+  --r-panel: 22px;
+  --r-inner: 14px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  --gutter: 16px;
+  --tabbar-h: 64px;
+  --rail-w: 88px;
+  --topbar-h: 56px;
+  --content-max: 720px;
+
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+
+  --ease-out: cubic-bezier(0.2, 0.9, 0.25, 1);
+  --ease-pop: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-float: cubic-bezier(0.45, 0.05, 0.35, 0.95);
+  --ease-rise: cubic-bezier(0.16, 1, 0.3, 1);
+  --t-tap: 120ms;
+  --t-ui: 180ms;
+  --t-sheet: 280ms;
+  --t-pop: 350ms;
+
+  /* Layer scale: one place for every z-index. */
+  --z-map: 0;
+  --z-content: 1;
+  --z-chrome: 20;
+  --z-sheet: 40;
+  --z-banner: 50;
+  --z-celebrate: 60;
+}
+
+@media (min-width: 481px) {
+  :root {
+    --gutter: 24px;
+  }
+}

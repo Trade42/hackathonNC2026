@@ -1,0 +1,46 @@
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: var(--r-pill);
+  border: 1px solid rgba(10, 94, 147, 0.25);
+  background: linear-gradient(180deg, #ffffff, #f2f9fe);
+  color: var(--ink);
+  font-size: var(--fs-sm);
+  font-weight: 400;
+  box-shadow: inset 0 1px 0 #fff, 0 2px 5px rgba(16, 82, 128, 0.08);
+  transition: transform var(--t-tap) var(--ease-out), background-color var(--t-ui) var(--ease-out);
+  touch-action: manipulation;
+}
+
+.chip:active {
+  transform: scale(0.96);
+}
+
+.chip[aria-pressed='true'],
+.chip[aria-checked='true'] {
+  border-color: var(--sky-700);
+  background:
+    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.9), transparent 45%),
+    linear-gradient(180deg, #d9f1fc, #bfe6fa);
+  font-weight: 600;
+  box-shadow: inset 0 1px 0 #fff, inset 0 -2px 6px rgba(30, 143, 214, 0.25), 0 2px 6px rgba(16, 82, 128, 0.14);
+}
+
+.check {
+  display: inline-grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--sky-700);
+  color: #fff;
+}
+
+.group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}

@@ -1,0 +1,1726 @@
+[
+  {
+    "restaurant_id": "rst_cosmic",
+    "prices_are_estimates": true,
+    "categories": [
+      {
+        "id": "cat_cosmic_burritos",
+        "name": "Burritos",
+        "items": [
+          {
+            "id": "itm_cosmic_chicken_burrito",
+            "name": "Chicken Burrito",
+            "description": "Grilled chicken, rice, beans, cheese, lettuce and fresh salsa in a big flour tortilla.",
+            "price_cents": 899,
+            "tags": [
+              "popular"
+            ],
+            "image_url": null,
+            "options": [
+              {
+                "id": "opt_cosmic_chicken_burrito_beans",
+                "name": "Beans",
+                "min": 1,
+                "max": 1,
+                "choices": [
+                  {
+                    "id": "cho_cosmic_chicken_burrito_black_beans",
+                    "name": "Black beans",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_cosmic_chicken_burrito_pinto_beans",
+                    "name": "Pinto beans",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_cosmic_chicken_burrito_no_beans",
+                    "name": "No beans",
+                    "price_delta_cents": 0
+                  }
+                ]
+              },
+              {
+                "id": "opt_cosmic_chicken_burrito_extras",
+                "name": "Extras",
+                "min": 0,
+                "max": 3,
+                "choices": [
+                  {
+                    "id": "cho_cosmic_chicken_burrito_guac",
+                    "name": "Guacamole",
+                    "price_delta_cents": 150
+                  },
+                  {
+                    "id": "cho_cosmic_chicken_burrito_sour_cream",
+                    "name": "Sour cream",
+                    "price_delta_cents": 75
+                  },
+                  {
+                    "id": "cho_cosmic_chicken_burrito_extra_cheese",
+                    "name": "Extra cheese",
+                    "price_delta_cents": 100
+                  },
+                  {
+                    "id": "cho_cosmic_chicken_burrito_jalapenos",
+                    "name": "Jalapenos",
+                    "price_delta_cents": 50
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "itm_cosmic_steak_burrito",
+            "name": "Steak Burrito",
+            "description": "Grilled steak, rice, beans, cheese and pico de gallo in a flour tortilla.",
+            "price_cents": 1049,
+            "tags": [],
+            "image_url": null,
+            "options": [
+              {
+                "id": "opt_cosmic_steak_burrito_beans",
+                "name": "Beans",
+                "min": 1,
+                "max": 1,
+                "choices": [
+                  {
+                    "id": "cho_cosmic_steak_burrito_black_beans",
+                    "name": "Black beans",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_cosmic_steak_burrito_pinto_beans",
+                    "name": "Pinto beans",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_cosmic_steak_burrito_no_beans",
+                    "name": "No beans",
+                    "price_delta_cents": 0
+                  }
+                ]
+              },
+              {
+                "id": "opt_cosmic_steak_burrito_extras",
+                "name": "Extras",
+                "min": 0,
+                "max": 3,
+                "choices": [
+                  {
+                    "id": "cho_cosmic_steak_burrito_guac",
+                    "name": "Guacamole",
+                    "price_delta_cents": 150
+                  },
+                  {
+                    "id": "cho_cosmic_steak_burrito_sour_cream",
+                    "name": "Sour cream",
+                    "price_delta_cents": 75
+                  },
+                  {
+                    "id": "cho_cosmic_steak_burrito_extra_cheese",
+                    "name": "Extra cheese",
+                    "price_delta_cents": 100
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "itm_cosmic_bean_cheese_burrito",
+            "name": "Bean & Cheese Burrito",
+            "description": "Beans, rice, melted cheese and salsa. Cheap, filling, late-night classic.",
+            "price_cents": 649,
+            "tags": [
+              "vegetarian"
+            ],
+            "image_url": null,
+            "options": [
+              {
+                "id": "opt_cosmic_bean_cheese_burrito_beans",
+                "name": "Beans",
+                "min": 1,
+                "max": 1,
+                "choices": [
+                  {
+                    "id": "cho_cosmic_bean_cheese_burrito_black_beans",
+                    "name": "Black beans",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_cosmic_bean_cheese_burrito_pinto_beans",
+                    "name": "Pinto beans",
+                    "price_delta_cents": 0
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "cat_cosmic_quesadillas_nachos",
+        "name": "Quesadillas & Nachos",
+        "items": [
+          {
+            "id": "itm_cosmic_quesadilla",
+            "name": "Quesadilla",
+            "description": "Griddled flour tortilla with melted cheese, served with salsa and sour cream.",
+            "price_cents": 749,
+            "tags": [],
+            "image_url": null,
+            "options": [
+              {
+                "id": "opt_cosmic_quesadilla_filling",
+                "name": "Filling",
+                "min": 1,
+                "max": 1,
+                "choices": [
+                  {
+                    "id": "cho_cosmic_quesadilla_cheese_only",
+                    "name": "Cheese only",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_cosmic_quesadilla_veggie",
+                    "name": "Grilled veggies",
+                    "price_delta_cents": 100
+                  },
+                  {
+                    "id": "cho_cosmic_quesadilla_chicken",
+                    "name": "Chicken",
+                    "price_delta_cents": 150
+                  },
+                  {
+                    "id": "cho_cosmic_quesadilla_steak",
+                    "name": "Steak",
+                    "price_delta_cents": 250
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "itm_cosmic_nachos",
+            "name": "Loaded Nachos",
+            "description": "Tortilla chips piled with queso, beans, pico de gallo, jalapenos and sour cream.",
+            "price_cents": 899,
+            "tags": [
+              "popular",
+              "spicy"
+            ],
+            "image_url": null,
+            "options": [
+              {
+                "id": "opt_cosmic_nachos_protein",
+                "name": "Add protein",
+                "min": 0,
+                "max": 1,
+                "choices": [
+                  {
+                    "id": "cho_cosmic_nachos_chicken",
+                    "name": "Chicken",
+                    "price_delta_cents": 200
+                  },
+                  {
+                    "id": "cho_cosmic_nachos_steak",
+                    "name": "Steak",
+                    "price_delta_cents": 300
+                  }
+                ]
+              },
+              {
+                "id": "opt_cosmic_nachos_extras",
+                "name": "Extras",
+                "min": 0,
+                "max": 2,
+                "choices": [
+                  {
+                    "id": "cho_cosmic_nachos_guac",
+                    "name": "Guacamole",
+                    "price_delta_cents": 150
+                  },
+                  {
+                    "id": "cho_cosmic_nachos_extra_queso",
+                    "name": "Extra queso",
+                    "price_delta_cents": 125
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "cat_cosmic_sides",
+        "name": "Chips & Sides",
+        "items": [
+          {
+            "id": "itm_cosmic_chips_salsa",
+            "name": "Chips & Salsa",
+            "description": "Warm tortilla chips with house red salsa.",
+            "price_cents": 349,
+            "tags": [
+              "vegan",
+              "gluten_free"
+            ],
+            "image_url": null,
+            "options": []
+          },
+          {
+            "id": "itm_cosmic_chips_guac",
+            "name": "Chips & Guacamole",
+            "description": "Warm tortilla chips with a side of fresh guacamole.",
+            "price_cents": 599,
+            "tags": [
+              "vegan",
+              "gluten_free"
+            ],
+            "image_url": null,
+            "options": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "restaurant_id": "rst_supdogs",
+    "prices_are_estimates": true,
+    "categories": [
+      {
+        "id": "cat_supdogs_dogs_burgers",
+        "name": "Dogs & Burgers",
+        "items": [
+          {
+            "id": "itm_supdogs_classic_dog",
+            "name": "Classic Dog",
+            "description": "All-beef hot dog on a toasted bun, topped your way.",
+            "price_cents": 549,
+            "tags": [
+              "popular"
+            ],
+            "image_url": null,
+            "options": [
+              {
+                "id": "opt_supdogs_classic_dog_toppings",
+                "name": "Toppings",
+                "min": 0,
+                "max": 5,
+                "choices": [
+                  {
+                    "id": "cho_supdogs_classic_dog_chili",
+                    "name": "Chili",
+                    "price_delta_cents": 75
+                  },
+                  {
+                    "id": "cho_supdogs_classic_dog_cheese",
+                    "name": "Cheese",
+                    "price_delta_cents": 75
+                  },
+                  {
+                    "id": "cho_supdogs_classic_dog_slaw",
+                    "name": "Slaw",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_supdogs_classic_dog_onions",
+                    "name": "Onions",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_supdogs_classic_dog_relish",
+                    "name": "Relish",
+                    "price_delta_cents": 0
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "itm_supdogs_veggie_dog",
+            "name": "Veggie Dog",
+            "description": "Plant-based dog on a toasted bun with mustard and onions.",
+            "price_cents": 599,
+            "tags": [
+              "vegetarian"
+            ],
+            "image_url": null,
+            "options": []
+          },
+          {
+            "id": "itm_supdogs_sup_burger",
+            "name": "Sup Burger",
+            "description": "Smashed beef patty with lettuce, tomato, pickles and Sup sauce on a brioche bun.",
+            "price_cents": 999,
+            "tags": [
+              "popular"
+            ],
+            "image_url": null,
+            "options": [
+              {
+                "id": "opt_supdogs_sup_burger_cheese",
+                "name": "Cheese",
+                "min": 1,
+                "max": 1,
+                "choices": [
+                  {
+                    "id": "cho_supdogs_sup_burger_american",
+                    "name": "American",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_supdogs_sup_burger_cheddar",
+                    "name": "Cheddar",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_supdogs_sup_burger_pepper_jack",
+                    "name": "Pepper jack",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_supdogs_sup_burger_no_cheese",
+                    "name": "No cheese",
+                    "price_delta_cents": 0
+                  }
+                ]
+              },
+              {
+                "id": "opt_supdogs_sup_burger_addons",
+                "name": "Add-ons",
+                "min": 0,
+                "max": 3,
+                "choices": [
+                  {
+                    "id": "cho_supdogs_sup_burger_bacon",
+                    "name": "Bacon",
+                    "price_delta_cents": 200
+                  },
+                  {
+                    "id": "cho_supdogs_sup_burger_fried_egg",
+                    "name": "Fried egg",
+                    "price_delta_cents": 150
+                  },
+                  {
+                    "id": "cho_supdogs_sup_burger_extra_patty",
+                    "name": "Extra patty",
+                    "price_delta_cents": 300
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "cat_supdogs_sides",
+        "name": "Tots & Fries",
+        "items": [
+          {
+            "id": "itm_supdogs_tots",
+            "name": "Tots",
+            "description": "Crispy tater tots, the late-night favorite.",
+            "price_cents": 449,
+            "tags": [
+              "vegetarian",
+              "popular"
+            ],
+            "image_url": null,
+            "options": [
+              {
+                "id": "opt_supdogs_tots_toppings",
+                "name": "Toppings",
+                "min": 0,
+                "max": 2,
+                "choices": [
+                  {
+                    "id": "cho_supdogs_tots_cheese",
+                    "name": "Cheese sauce",
+                    "price_delta_cents": 125
+                  },
+                  {
+                    "id": "cho_supdogs_tots_chili",
+                    "name": "Chili",
+                    "price_delta_cents": 150
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "itm_supdogs_fries",
+            "name": "Fries",
+            "description": "Hand-cut fries, salted hot out of the fryer.",
+            "price_cents": 399,
+            "tags": [
+              "vegan"
+            ],
+            "image_url": null,
+            "options": [
+              {
+                "id": "opt_supdogs_fries_size",
+                "name": "Size",
+                "min": 1,
+                "max": 1,
+                "choices": [
+                  {
+                    "id": "cho_supdogs_fries_regular",
+                    "name": "Regular",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_supdogs_fries_large",
+                    "name": "Large",
+                    "price_delta_cents": 200
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "cat_supdogs_shakes",
+        "name": "Shakes",
+        "items": [
+          {
+            "id": "itm_supdogs_shake",
+            "name": "Milkshake",
+            "description": "Thick hand-spun milkshake.",
+            "price_cents": 699,
+            "tags": [
+              "vegetarian"
+            ],
+            "image_url": null,
+            "options": [
+              {
+                "id": "opt_supdogs_shake_flavor",
+                "name": "Flavor",
+                "min": 1,
+                "max": 1,
+                "choices": [
+                  {
+                    "id": "cho_supdogs_shake_vanilla",
+                    "name": "Vanilla",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_supdogs_shake_chocolate",
+                    "name": "Chocolate",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_supdogs_shake_strawberry",
+                    "name": "Strawberry",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_supdogs_shake_cookies_cream",
+                    "name": "Cookies & cream",
+                    "price_delta_cents": 50
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "restaurant_id": "rst_limebasil",
+    "prices_are_estimates": true,
+    "categories": [
+      {
+        "id": "cat_limebasil_pho",
+        "name": "Pho",
+        "items": [
+          {
+            "id": "itm_limebasil_beef_pho",
+            "name": "Beef Pho",
+            "description": "Slow-simmered beef broth with rice noodles, rare steak and brisket, served with basil, bean sprouts and lime.",
+            "price_cents": 1395,
+            "tags": [
+              "popular",
+              "gluten_free"
+            ],
+            "image_url": null,
+            "options": [
+              {
+                "id": "opt_limebasil_beef_pho_size",
+                "name": "Size",
+                "min": 1,
+                "max": 1,
+                "choices": [
+                  {
+                    "id": "cho_limebasil_beef_pho_regular",
+                    "name": "Regular",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_limebasil_beef_pho_large",
+                    "name": "Large",
+                    "price_delta_cents": 250
+                  }
+                ]
+              },
+              {
+                "id": "opt_limebasil_beef_pho_extras",
+                "name": "Extras",
+                "min": 0,
+                "max": 2,
+                "choices": [
+                  {
+                    "id": "cho_limebasil_beef_pho_extra_noodles",
+                    "name": "Extra noodles",
+                    "price_delta_cents": 200
+                  },
+                  {
+                    "id": "cho_limebasil_beef_pho_extra_meat",
+                    "name": "Extra meat",
+                    "price_delta_cents": 350
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "itm_limebasil_chicken_pho",
+            "name": "Chicken Pho",
+            "description": "Clear chicken broth with rice noodles, poached chicken, scallions and herbs.",
+            "price_cents": 1295,
+            "tags": [
+              "gluten_free"
+            ],
+            "image_url": null,
+            "options": [
+              {
+                "id": "opt_limebasil_chicken_pho_size",
+                "name": "Size",
+                "min": 1,
+                "max": 1,
+                "choices": [
+                  {
+                    "id": "cho_limebasil_chicken_pho_regular",
+                    "name": "Regular",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_limebasil_chicken_pho_large",
+                    "name": "Large",
+                    "price_delta_cents": 250
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "cat_limebasil_banh_mi_bowls",
+        "name": "Banh Mi & Bowls",
+        "items": [
+          {
+            "id": "itm_limebasil_banh_mi",
+            "name": "Banh Mi",
+            "description": "Toasted baguette with pickled carrot and daikon, cucumber, cilantro, jalapeno and mayo.",
+            "price_cents": 1095,
+            "tags": [
+              "popular",
+              "spicy"
+            ],
+            "image_url": null,
+            "options": [
+              {
+                "id": "opt_limebasil_banh_mi_protein",
+                "name": "Protein",
+                "min": 1,
+                "max": 1,
+                "choices": [
+                  {
+                    "id": "cho_limebasil_banh_mi_grilled_pork",
+                    "name": "Grilled pork",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_limebasil_banh_mi_lemongrass_chicken",
+                    "name": "Lemongrass chicken",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_limebasil_banh_mi_tofu",
+                    "name": "Crispy tofu",
+                    "price_delta_cents": 0
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "itm_limebasil_vermicelli_bowl",
+            "name": "Vermicelli Bowl",
+            "description": "Rice vermicelli over lettuce, herbs, cucumber and pickled veggies with peanuts and nuoc cham.",
+            "price_cents": 1395,
+            "tags": [
+              "gluten_free"
+            ],
+            "image_url": null,
+            "options": [
+              {
+                "id": "opt_limebasil_vermicelli_bowl_protein",
+                "name": "Protein",
+                "min": 1,
+                "max": 1,
+                "choices": [
+                  {
+                    "id": "cho_limebasil_vermicelli_bowl_grilled_pork",
+                    "name": "Grilled pork",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_limebasil_vermicelli_bowl_lemongrass_chicken",
+                    "name": "Lemongrass chicken",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_limebasil_vermicelli_bowl_shrimp",
+                    "name": "Grilled shrimp",
+                    "price_delta_cents": 200
+                  },
+                  {
+                    "id": "cho_limebasil_vermicelli_bowl_tofu",
+                    "name": "Crispy tofu",
+                    "price_delta_cents": 0
+                  }
+                ]
+              },
+              {
+                "id": "opt_limebasil_vermicelli_bowl_extras",
+                "name": "Extras",
+                "min": 0,
+                "max": 1,
+                "choices": [
+                  {
+                    "id": "cho_limebasil_vermicelli_bowl_egg_roll",
+                    "name": "Add an egg roll",
+                    "price_delta_cents": 250
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "cat_limebasil_rolls",
+        "name": "Rolls",
+        "items": [
+          {
+            "id": "itm_limebasil_spring_rolls",
+            "name": "Fresh Spring Rolls",
+            "description": "Two rice-paper rolls with vermicelli, lettuce and herbs, with peanut dipping sauce.",
+            "price_cents": 695,
+            "tags": [
+              "gluten_free"
+            ],
+            "image_url": null,
+            "options": [
+              {
+                "id": "opt_limebasil_spring_rolls_filling",
+                "name": "Filling",
+                "min": 1,
+                "max": 1,
+                "choices": [
+                  {
+                    "id": "cho_limebasil_spring_rolls_shrimp_pork",
+                    "name": "Shrimp & pork",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_limebasil_spring_rolls_tofu",
+                    "name": "Tofu",
+                    "price_delta_cents": 0
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "itm_limebasil_egg_rolls",
+            "name": "Crispy Egg Rolls",
+            "description": "Three fried pork and vegetable egg rolls with nuoc cham.",
+            "price_cents": 649,
+            "tags": [],
+            "image_url": null,
+            "options": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "restaurant_id": "rst_meddeli",
+    "prices_are_estimates": true,
+    "categories": [
+      {
+        "id": "cat_meddeli_wraps",
+        "name": "Wraps",
+        "items": [
+          {
+            "id": "itm_meddeli_falafel_wrap",
+            "name": "Falafel Wrap",
+            "description": "Crispy falafel, lettuce, tomato, pickled turnip and tahini rolled in warm pita.",
+            "price_cents": 949,
+            "tags": [
+              "vegan",
+              "popular"
+            ],
+            "image_url": null,
+            "options": [
+              {
+                "id": "opt_meddeli_falafel_wrap_extras",
+                "name": "Extras",
+                "min": 0,
+                "max": 2,
+                "choices": [
+                  {
+                    "id": "cho_meddeli_falafel_wrap_hummus",
+                    "name": "Add hummus",
+                    "price_delta_cents": 100
+                  },
+                  {
+                    "id": "cho_meddeli_falafel_wrap_feta",
+                    "name": "Add feta",
+                    "price_delta_cents": 100
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "itm_meddeli_chicken_shawarma_wrap",
+            "name": "Chicken Shawarma Wrap",
+            "description": "Spiced chicken shawarma with garlic sauce, pickles and tomato in pita.",
+            "price_cents": 1095,
+            "tags": [
+              "popular"
+            ],
+            "image_url": null,
+            "options": [
+              {
+                "id": "opt_meddeli_chicken_shawarma_wrap_sauce",
+                "name": "Sauce",
+                "min": 0,
+                "max": 2,
+                "choices": [
+                  {
+                    "id": "cho_meddeli_chicken_shawarma_wrap_garlic",
+                    "name": "Garlic sauce",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_meddeli_chicken_shawarma_wrap_tahini",
+                    "name": "Tahini",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_meddeli_chicken_shawarma_wrap_hot_sauce",
+                    "name": "Hot sauce",
+                    "price_delta_cents": 0
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "itm_meddeli_gyro_wrap",
+            "name": "Gyro Wrap",
+            "description": "Sliced beef and lamb gyro with tzatziki, onion and tomato in pita.",
+            "price_cents": 1149,
+            "tags": [],
+            "image_url": null,
+            "options": [
+              {
+                "id": "opt_meddeli_gyro_wrap_extras",
+                "name": "Extras",
+                "min": 0,
+                "max": 2,
+                "choices": [
+                  {
+                    "id": "cho_meddeli_gyro_wrap_feta",
+                    "name": "Add feta",
+                    "price_delta_cents": 100
+                  },
+                  {
+                    "id": "cho_meddeli_gyro_wrap_extra_meat",
+                    "name": "Extra meat",
+                    "price_delta_cents": 300
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "cat_meddeli_plates",
+        "name": "Plates",
+        "items": [
+          {
+            "id": "itm_meddeli_plate",
+            "name": "Mediterranean Plate",
+            "description": "Your choice of protein over rice with hummus, Greek salad and warm pita.",
+            "price_cents": 1395,
+            "tags": [
+              "popular"
+            ],
+            "image_url": null,
+            "options": [
+              {
+                "id": "opt_meddeli_plate_protein",
+                "name": "Protein",
+                "min": 1,
+                "max": 1,
+                "choices": [
+                  {
+                    "id": "cho_meddeli_plate_falafel",
+                    "name": "Falafel",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_meddeli_plate_chicken_shawarma",
+                    "name": "Chicken shawarma",
+                    "price_delta_cents": 150
+                  },
+                  {
+                    "id": "cho_meddeli_plate_gyro",
+                    "name": "Gyro",
+                    "price_delta_cents": 200
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "cat_meddeli_sides",
+        "name": "Dips & Sides",
+        "items": [
+          {
+            "id": "itm_meddeli_hummus_pita",
+            "name": "Hummus & Pita",
+            "description": "Creamy house hummus with olive oil and paprika, served with warm pita.",
+            "price_cents": 699,
+            "tags": [
+              "vegan"
+            ],
+            "image_url": null,
+            "options": []
+          },
+          {
+            "id": "itm_meddeli_baklava",
+            "name": "Baklava",
+            "description": "Flaky phyllo layered with walnuts and honey syrup.",
+            "price_cents": 399,
+            "tags": [
+              "vegetarian"
+            ],
+            "image_url": null,
+            "options": []
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "restaurant_id": "rst_insomnia",
+    "prices_are_estimates": true,
+    "categories": [
+      {
+        "id": "cat_insomnia_cookies",
+        "name": "Cookies",
+        "items": [
+          {
+            "id": "itm_insomnia_classic_cookie",
+            "name": "Classic Cookie",
+            "description": "One warm, fresh-baked classic cookie.",
+            "price_cents": 325,
+            "tags": [
+              "vegetarian",
+              "popular"
+            ],
+            "image_url": null,
+            "options": [
+              {
+                "id": "opt_insomnia_classic_cookie_flavor",
+                "name": "Flavor",
+                "min": 1,
+                "max": 1,
+                "choices": [
+                  {
+                    "id": "cho_insomnia_classic_cookie_chocolate_chunk",
+                    "name": "Chocolate chunk",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_insomnia_classic_cookie_double_chocolate",
+                    "name": "Double chocolate chunk",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_insomnia_classic_cookie_snickerdoodle",
+                    "name": "Snickerdoodle",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_insomnia_classic_cookie_sugar",
+                    "name": "Sugar",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_insomnia_classic_cookie_peanut_butter_chip",
+                    "name": "Peanut butter chip",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_insomnia_classic_cookie_oatmeal_raisin",
+                    "name": "Oatmeal raisin",
+                    "price_delta_cents": 0
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "itm_insomnia_deluxe_cookie",
+            "name": "Deluxe Cookie",
+            "description": "One oversized, loaded deluxe cookie.",
+            "price_cents": 495,
+            "tags": [
+              "vegetarian"
+            ],
+            "image_url": null,
+            "options": [
+              {
+                "id": "opt_insomnia_deluxe_cookie_flavor",
+                "name": "Flavor",
+                "min": 1,
+                "max": 1,
+                "choices": [
+                  {
+                    "id": "cho_insomnia_deluxe_cookie_smores",
+                    "name": "S'mores",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_insomnia_deluxe_cookie_triple_chocolate",
+                    "name": "Triple chocolate chunk",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_insomnia_deluxe_cookie_cookies_cream",
+                    "name": "Cookies & cream",
+                    "price_delta_cents": 0
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "itm_insomnia_cookie_box",
+            "name": "Cookie Box",
+            "description": "An assorted box of warm classic cookies, the baker's pick of flavors.",
+            "price_cents": 1695,
+            "tags": [
+              "vegetarian",
+              "popular"
+            ],
+            "image_url": null,
+            "options": [
+              {
+                "id": "opt_insomnia_cookie_box_size",
+                "name": "Box size",
+                "min": 1,
+                "max": 1,
+                "choices": [
+                  {
+                    "id": "cho_insomnia_cookie_box_six",
+                    "name": "6 cookies",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_insomnia_cookie_box_twelve",
+                    "name": "12 cookies",
+                    "price_delta_cents": 1300
+                  },
+                  {
+                    "id": "cho_insomnia_cookie_box_twenty_four",
+                    "name": "24 cookies",
+                    "price_delta_cents": 3800
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "cat_insomnia_ice_cream",
+        "name": "Ice Cream",
+        "items": [
+          {
+            "id": "itm_insomnia_cookiewich",
+            "name": "Cookiewich",
+            "description": "A scoop of ice cream sandwiched between two warm classic cookies.",
+            "price_cents": 695,
+            "tags": [
+              "vegetarian",
+              "popular"
+            ],
+            "image_url": null,
+            "options": [
+              {
+                "id": "opt_insomnia_cookiewich_cookie",
+                "name": "Cookie",
+                "min": 1,
+                "max": 1,
+                "choices": [
+                  {
+                    "id": "cho_insomnia_cookiewich_chocolate_chunk",
+                    "name": "Chocolate chunk",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_insomnia_cookiewich_double_chocolate",
+                    "name": "Double chocolate chunk",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_insomnia_cookiewich_snickerdoodle",
+                    "name": "Snickerdoodle",
+                    "price_delta_cents": 0
+                  }
+                ]
+              },
+              {
+                "id": "opt_insomnia_cookiewich_ice_cream",
+                "name": "Ice cream",
+                "min": 1,
+                "max": 1,
+                "choices": [
+                  {
+                    "id": "cho_insomnia_cookiewich_vanilla",
+                    "name": "Vanilla",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_insomnia_cookiewich_chocolate",
+                    "name": "Chocolate",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_insomnia_cookiewich_cookies_cream",
+                    "name": "Cookies & cream",
+                    "price_delta_cents": 0
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "itm_insomnia_ice_cream_cup",
+            "name": "Ice Cream Cup",
+            "description": "Two scoops of ice cream in a cup.",
+            "price_cents": 495,
+            "tags": [
+              "vegetarian",
+              "gluten_free"
+            ],
+            "image_url": null,
+            "options": [
+              {
+                "id": "opt_insomnia_ice_cream_cup_flavor",
+                "name": "Flavor",
+                "min": 1,
+                "max": 1,
+                "choices": [
+                  {
+                    "id": "cho_insomnia_ice_cream_cup_vanilla",
+                    "name": "Vanilla",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_insomnia_ice_cream_cup_chocolate",
+                    "name": "Chocolate",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_insomnia_ice_cream_cup_cookies_cream",
+                    "name": "Cookies & cream",
+                    "price_delta_cents": 0
+                  }
+                ]
+              },
+              {
+                "id": "opt_insomnia_ice_cream_cup_topping",
+                "name": "Toppings",
+                "min": 0,
+                "max": 2,
+                "choices": [
+                  {
+                    "id": "cho_insomnia_ice_cream_cup_cookie_crumble",
+                    "name": "Cookie crumble",
+                    "price_delta_cents": 75
+                  },
+                  {
+                    "id": "cho_insomnia_ice_cream_cup_fudge",
+                    "name": "Hot fudge",
+                    "price_delta_cents": 75
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "cat_insomnia_milk",
+        "name": "Milk",
+        "items": [
+          {
+            "id": "itm_insomnia_milk",
+            "name": "Cold Milk",
+            "description": "An ice-cold carton of milk to go with your cookies.",
+            "price_cents": 275,
+            "tags": [
+              "vegetarian",
+              "gluten_free"
+            ],
+            "image_url": null,
+            "options": [
+              {
+                "id": "opt_insomnia_milk_type",
+                "name": "Milk",
+                "min": 1,
+                "max": 1,
+                "choices": [
+                  {
+                    "id": "cho_insomnia_milk_whole",
+                    "name": "Whole milk",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_insomnia_milk_chocolate",
+                    "name": "Chocolate milk",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_insomnia_milk_oat",
+                    "name": "Oat milk",
+                    "price_delta_cents": 50
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "restaurant_id": "rst_alpine",
+    "prices_are_estimates": true,
+    "categories": [
+      {
+        "id": "cat_alpine_bagels",
+        "name": "Bagels",
+        "items": [
+          {
+            "id": "itm_alpine_bagel_spread",
+            "name": "Bagel with Spread",
+            "description": "A fresh-baked bagel, toasted or not, with your choice of spread.",
+            "price_cents": 399,
+            "tags": [
+              "vegetarian",
+              "popular"
+            ],
+            "image_url": null,
+            "options": [
+              {
+                "id": "opt_alpine_bagel_spread_bagel",
+                "name": "Bagel",
+                "min": 1,
+                "max": 1,
+                "choices": [
+                  {
+                    "id": "cho_alpine_bagel_spread_plain",
+                    "name": "Plain",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_alpine_bagel_spread_everything",
+                    "name": "Everything",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_alpine_bagel_spread_sesame",
+                    "name": "Sesame",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_alpine_bagel_spread_cinnamon_raisin",
+                    "name": "Cinnamon raisin",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_alpine_bagel_spread_asiago",
+                    "name": "Asiago",
+                    "price_delta_cents": 50
+                  }
+                ]
+              },
+              {
+                "id": "opt_alpine_bagel_spread_spread",
+                "name": "Spread",
+                "min": 1,
+                "max": 1,
+                "choices": [
+                  {
+                    "id": "cho_alpine_bagel_spread_butter",
+                    "name": "Butter",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_alpine_bagel_spread_plain_cream_cheese",
+                    "name": "Plain cream cheese",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_alpine_bagel_spread_veggie_cream_cheese",
+                    "name": "Veggie cream cheese",
+                    "price_delta_cents": 50
+                  },
+                  {
+                    "id": "cho_alpine_bagel_spread_scallion_cream_cheese",
+                    "name": "Scallion cream cheese",
+                    "price_delta_cents": 50
+                  },
+                  {
+                    "id": "cho_alpine_bagel_spread_honey_walnut_cream_cheese",
+                    "name": "Honey walnut cream cheese",
+                    "price_delta_cents": 75
+                  },
+                  {
+                    "id": "cho_alpine_bagel_spread_hummus",
+                    "name": "Hummus",
+                    "price_delta_cents": 50
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "itm_alpine_lox_bagel",
+            "name": "Lox Bagel",
+            "description": "Smoked salmon, cream cheese, capers, red onion and tomato on your choice of bagel.",
+            "price_cents": 1295,
+            "tags": [],
+            "image_url": null,
+            "options": [
+              {
+                "id": "opt_alpine_lox_bagel_bagel",
+                "name": "Bagel",
+                "min": 1,
+                "max": 1,
+                "choices": [
+                  {
+                    "id": "cho_alpine_lox_bagel_plain",
+                    "name": "Plain",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_alpine_lox_bagel_everything",
+                    "name": "Everything",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_alpine_lox_bagel_sesame",
+                    "name": "Sesame",
+                    "price_delta_cents": 0
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "cat_alpine_breakfast",
+        "name": "Breakfast Sandwiches",
+        "items": [
+          {
+            "id": "itm_alpine_egg_cheese",
+            "name": "Egg & Cheese Bagel",
+            "description": "Fried egg and melted American cheese on a toasted bagel. Add a breakfast meat.",
+            "price_cents": 649,
+            "tags": [
+              "vegetarian",
+              "popular"
+            ],
+            "image_url": null,
+            "options": [
+              {
+                "id": "opt_alpine_egg_cheese_bagel",
+                "name": "Bagel",
+                "min": 1,
+                "max": 1,
+                "choices": [
+                  {
+                    "id": "cho_alpine_egg_cheese_plain",
+                    "name": "Plain",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_alpine_egg_cheese_everything",
+                    "name": "Everything",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_alpine_egg_cheese_sesame",
+                    "name": "Sesame",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_alpine_egg_cheese_asiago",
+                    "name": "Asiago",
+                    "price_delta_cents": 50
+                  }
+                ]
+              },
+              {
+                "id": "opt_alpine_egg_cheese_meat",
+                "name": "Add meat",
+                "min": 0,
+                "max": 2,
+                "choices": [
+                  {
+                    "id": "cho_alpine_egg_cheese_bacon",
+                    "name": "Bacon",
+                    "price_delta_cents": 200
+                  },
+                  {
+                    "id": "cho_alpine_egg_cheese_sausage",
+                    "name": "Sausage",
+                    "price_delta_cents": 200
+                  },
+                  {
+                    "id": "cho_alpine_egg_cheese_ham",
+                    "name": "Ham",
+                    "price_delta_cents": 200
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "itm_alpine_veggie_egg",
+            "name": "Veggie Egg White Bagel",
+            "description": "Egg whites, spinach, tomato and Swiss on a toasted everything bagel.",
+            "price_cents": 799,
+            "tags": [
+              "vegetarian"
+            ],
+            "image_url": null,
+            "options": []
+          }
+        ]
+      },
+      {
+        "id": "cat_alpine_coffee",
+        "name": "Coffee",
+        "items": [
+          {
+            "id": "itm_alpine_drip_coffee",
+            "name": "Drip Coffee",
+            "description": "Fresh-brewed house coffee.",
+            "price_cents": 275,
+            "tags": [
+              "vegan"
+            ],
+            "image_url": null,
+            "options": [
+              {
+                "id": "opt_alpine_drip_coffee_size",
+                "name": "Size",
+                "min": 1,
+                "max": 1,
+                "choices": [
+                  {
+                    "id": "cho_alpine_drip_coffee_small",
+                    "name": "Small",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_alpine_drip_coffee_medium",
+                    "name": "Medium",
+                    "price_delta_cents": 50
+                  },
+                  {
+                    "id": "cho_alpine_drip_coffee_large",
+                    "name": "Large",
+                    "price_delta_cents": 100
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "itm_alpine_latte",
+            "name": "Latte",
+            "description": "Espresso with steamed milk, hot or iced.",
+            "price_cents": 525,
+            "tags": [
+              "vegetarian"
+            ],
+            "image_url": null,
+            "options": [
+              {
+                "id": "opt_alpine_latte_size",
+                "name": "Size",
+                "min": 1,
+                "max": 1,
+                "choices": [
+                  {
+                    "id": "cho_alpine_latte_small",
+                    "name": "Small",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_alpine_latte_large",
+                    "name": "Large",
+                    "price_delta_cents": 100
+                  }
+                ]
+              },
+              {
+                "id": "opt_alpine_latte_milk",
+                "name": "Milk",
+                "min": 1,
+                "max": 1,
+                "choices": [
+                  {
+                    "id": "cho_alpine_latte_whole",
+                    "name": "Whole milk",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_alpine_latte_oat",
+                    "name": "Oat milk",
+                    "price_delta_cents": 75
+                  },
+                  {
+                    "id": "cho_alpine_latte_almond",
+                    "name": "Almond milk",
+                    "price_delta_cents": 75
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "restaurant_id": "rst_weaver",
+    "prices_are_estimates": true,
+    "categories": [
+      {
+        "id": "cat_weaver_hot_bar",
+        "name": "Hot Bar & Soup",
+        "items": [
+          {
+            "id": "itm_weaver_hot_bar_plate",
+            "name": "Hot Bar Plate",
+            "description": "A packed box from the hot bar: today's entrees, roasted vegetables and grains. Weighed at the register; this is a typical price.",
+            "price_cents": 1199,
+            "tags": [
+              "popular"
+            ],
+            "image_url": null,
+            "options": [
+              {
+                "id": "opt_weaver_hot_bar_plate_size",
+                "name": "Box size",
+                "min": 1,
+                "max": 1,
+                "choices": [
+                  {
+                    "id": "cho_weaver_hot_bar_plate_small",
+                    "name": "Small box",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_weaver_hot_bar_plate_large",
+                    "name": "Large box",
+                    "price_delta_cents": 450
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "itm_weaver_soup",
+            "name": "Soup of the Day",
+            "description": "House-made soup from the co-op kitchen, with a slice of bread.",
+            "price_cents": 549,
+            "tags": [
+              "vegetarian"
+            ],
+            "image_url": null,
+            "options": [
+              {
+                "id": "opt_weaver_soup_size",
+                "name": "Size",
+                "min": 1,
+                "max": 1,
+                "choices": [
+                  {
+                    "id": "cho_weaver_soup_cup",
+                    "name": "Cup",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_weaver_soup_bowl",
+                    "name": "Bowl",
+                    "price_delta_cents": 250
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "cat_weaver_deli",
+        "name": "Deli",
+        "items": [
+          {
+            "id": "itm_weaver_turkey_brie",
+            "name": "Turkey & Brie Sandwich",
+            "description": "Roast turkey, brie, apple and honey mustard on bread from the co-op bakery.",
+            "price_cents": 1095,
+            "tags": [
+              "popular"
+            ],
+            "image_url": null,
+            "options": [
+              {
+                "id": "opt_weaver_turkey_brie_bread",
+                "name": "Bread",
+                "min": 1,
+                "max": 1,
+                "choices": [
+                  {
+                    "id": "cho_weaver_turkey_brie_baguette",
+                    "name": "Baguette",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_weaver_turkey_brie_sourdough",
+                    "name": "Sourdough",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_weaver_turkey_brie_multigrain",
+                    "name": "Multigrain",
+                    "price_delta_cents": 0
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "itm_weaver_hummus_wrap",
+            "name": "Hummus Veggie Wrap",
+            "description": "Hummus, cucumber, carrot, greens and roasted red pepper in a whole wheat wrap.",
+            "price_cents": 949,
+            "tags": [
+              "vegan"
+            ],
+            "image_url": null,
+            "options": []
+          },
+          {
+            "id": "itm_weaver_kale_salad",
+            "name": "Kale Salad",
+            "description": "Massaged kale with carrots, sunflower seeds, cranberries and lemon tahini dressing.",
+            "price_cents": 899,
+            "tags": [
+              "vegan",
+              "gluten_free"
+            ],
+            "image_url": null,
+            "options": [
+              {
+                "id": "opt_weaver_kale_salad_protein",
+                "name": "Add protein",
+                "min": 0,
+                "max": 1,
+                "choices": [
+                  {
+                    "id": "cho_weaver_kale_salad_chicken",
+                    "name": "Roast chicken",
+                    "price_delta_cents": 300
+                  },
+                  {
+                    "id": "cho_weaver_kale_salad_tofu",
+                    "name": "Baked tofu",
+                    "price_delta_cents": 250
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "cat_weaver_coffee",
+        "name": "Coffee",
+        "items": [
+          {
+            "id": "itm_weaver_coffee",
+            "name": "Fair Trade Drip Coffee",
+            "description": "Organic fair trade house coffee from the cafe counter.",
+            "price_cents": 250,
+            "tags": [
+              "vegan"
+            ],
+            "image_url": null,
+            "options": [
+              {
+                "id": "opt_weaver_coffee_size",
+                "name": "Size",
+                "min": 1,
+                "max": 1,
+                "choices": [
+                  {
+                    "id": "cho_weaver_coffee_small",
+                    "name": "Small",
+                    "price_delta_cents": 0
+                  },
+                  {
+                    "id": "cho_weaver_coffee_large",
+                    "name": "Large",
+                    "price_delta_cents": 75
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+]

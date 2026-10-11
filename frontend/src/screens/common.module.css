@@ -1,0 +1,193 @@
+/* Shared screen patterns. */
+.section {
+  display: grid;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.sectionHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.sectionHead h2 {
+  font-size: var(--fs-lg);
+}
+
+.sectionHead a {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.list {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  width: 100%;
+  min-height: 64px;
+  padding: var(--space-3) var(--space-4);
+  color: inherit;
+  text-decoration: none;
+  text-align: left;
+  border: none;
+  font: inherit;
+  transition: transform var(--t-tap) var(--ease-out);
+}
+
+a.row:active,
+button.row:active {
+  transform: scale(0.985);
+}
+
+.rowMain {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.rowMain h3 {
+  font-size: var(--fs-md);
+  overflow-wrap: anywhere;
+}
+
+.rowMain p {
+  font-size: var(--fs-sm);
+  color: var(--ink-2);
+}
+
+.rowAside {
+  flex: none;
+  display: grid;
+  justify-items: end;
+  gap: 2px;
+  font-size: var(--fs-sm);
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 10px;
+  border-radius: var(--r-pill);
+  background: var(--sky-100);
+  color: var(--sky-700);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.pillLeaf {
+  background: var(--leaf-50);
+  color: var(--leaf-700);
+}
+
+.pillWarn {
+  background: #fdf3e0;
+  color: var(--warn);
+}
+
+.pillMuted {
+  background: #edf2f6;
+  color: var(--ink-2);
+}
+
+.big {
+  font-size: var(--fs-3xl);
+  font-weight: 300;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+
+.split {
+  display: grid;
+  gap: var(--space-5);
+}
+
+@media (min-width: 1024px) {
+  .split {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+  }
+  .sticky {
+    position: sticky;
+    top: calc(var(--topbar-h) + var(--safe-top) + var(--space-4));
+  }
+}
+
+.error {
+  color: var(--danger);
+  font-weight: 600;
+}
+
+.note {
+  font-size: var(--fs-sm);
+  color: var(--ink-2);
+}
+
+/* Bottom action bar on phones; sits above the tab bar. */
+.actionBar {
+  position: sticky;
+  bottom: calc(var(--tabbar-h) + var(--safe-bottom) + 22px);
+  z-index: var(--z-chrome);
+  margin-top: var(--space-4);
+}
+
+@media (max-height: 500px) and (min-aspect-ratio: 3/2), (min-width: 1024px) {
+  .actionBar {
+    bottom: var(--space-4);
+  }
+}
+
+/* Lists rise in one after another the first time they render (capped at 8). */
+.list > li {
+  animation: listIn 0.5s var(--ease-rise) both;
+}
+.list > li:nth-child(2) {
+  animation-delay: 45ms;
+}
+.list > li:nth-child(3) {
+  animation-delay: 90ms;
+}
+.list > li:nth-child(4) {
+  animation-delay: 135ms;
+}
+.list > li:nth-child(5) {
+  animation-delay: 180ms;
+}
+.list > li:nth-child(6) {
+  animation-delay: 225ms;
+}
+.list > li:nth-child(7) {
+  animation-delay: 270ms;
+}
+.list > li:nth-child(n + 8) {
+  animation-delay: 315ms;
+}
+
+@keyframes listIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.rowFoot {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 var(--space-4) var(--space-3);
+}

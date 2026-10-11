@@ -1,0 +1,72 @@
+.bubble {
+  --c: var(--sky-500);
+  --size: 44px;
+  --hx: 32%;
+  --hy: 28%;
+  position: relative;
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  color: #fff;
+  background:
+    radial-gradient(circle at var(--hx) var(--hy), rgba(255, 255, 255, 0.95) 0 7%, rgba(255, 255, 255, 0.45) 14%, transparent 32%),
+    radial-gradient(circle at 50% 120%, color-mix(in srgb, var(--c) 40%, white) 0%, transparent 55%),
+    radial-gradient(circle at 50% 40%, color-mix(in srgb, var(--c) 78%, white) 0%, var(--c) 72%, color-mix(in srgb, var(--c) 80%, black) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow:
+    inset 0 -3px 6px rgba(0, 30, 60, 0.18),
+    0 3px 8px color-mix(in srgb, var(--c) 35%, transparent);
+  font-weight: 600;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.35);
+}
+
+.clear {
+  color: var(--ink);
+  text-shadow: none;
+  background:
+    radial-gradient(circle at var(--hx) var(--hy), #fff 0 8%, rgba(255, 255, 255, 0.6) 15%, transparent 34%),
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.55) 0%, rgba(214, 240, 252, 0.75) 62%, rgba(124, 200, 242, 0.85) 100%);
+  border-color: rgba(255, 255, 255, 0.95);
+  box-shadow:
+    inset 0 -4px 10px rgba(30, 143, 214, 0.25),
+    inset 0 2px 4px #fff,
+    0 4px 12px rgba(16, 82, 128, 0.14);
+}
+
+.initial {
+  font-size: calc(var(--size) * 0.42);
+  line-height: 1;
+}
+
+.img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity var(--t-ui) var(--ease-out);
+}
+
+.img[data-loaded='true'] {
+  opacity: 1;
+}
+
+.stack {
+  display: inline-flex;
+  align-items: center;
+}
+
+.stack > * + * {
+  margin-left: -10px;
+}
+
+@media (forced-colors: active) {
+  .bubble {
+    border: 1px solid CanvasText;
+  }
+}

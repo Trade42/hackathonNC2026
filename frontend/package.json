@@ -1,0 +1,66 @@
+{
+  "name": "frontend",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "dev:mock": "vite --mode mock",
+    "build": "tsc -b && vite build",
+    "build:mock": "tsc -b && vite build --mode mock",
+    "lint": "oxlint",
+    "preview": "vite preview",
+    "preview:live": "vite preview --port 5173 --strictPort",
+    "sync:contract": "rm -rf src/contract && mkdir -p src/contract/fixtures && cp ../contract/openapi.yaml src/contract/ && cp ../contract/fixtures/*.json src/contract/fixtures/ && npm run gen:api",
+    "gen:api": "openapi-typescript src/contract/openapi.yaml --empty-objects-unknown -o src/api/schema.d.ts",
+    "test:e2e": "VITE_API_MODE=mock playwright test",
+    "test:live": "node e2e/live/live-pass.mjs",
+    "test:e2e:live": "LIVE=1 playwright test"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.5.3",
+    "@capacitor/app": "^8.1.2",
+    "@capacitor/app-launcher": "^8.0.1",
+    "@capacitor/core": "^8.5.3",
+    "@capacitor/haptics": "^8.0.2",
+    "@capacitor/ios": "^8.5.3",
+    "@capacitor/keyboard": "^8.0.6",
+    "@capacitor/share": "^8.0.3",
+    "@capacitor/splash-screen": "^8.0.2",
+    "@capacitor/status-bar": "^8.0.4",
+    "@fontsource-variable/exo-2": "^5.3.0",
+    "@fontsource/instrument-serif": "^5.3.0",
+    "@fontsource/pt-sans": "^5.3.0",
+    "@phosphor-icons/react": "^2.1.10",
+    "@supabase/supabase-js": "^2.117.3",
+    "@tanstack/react-query": "^5.104.1",
+    "maplibre-gl": "^6.13.0",
+    "motion": "^14.1.0",
+    "openapi-fetch": "^0.17.0",
+    "qrcode": "^1.5.4",
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8",
+    "react-router-dom": "^7.18.4"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^8.5.3",
+    "@playwright/test": "^1.64.0",
+    "@types/node": "^24.13.3",
+    "@types/qrcode": "^1.5.6",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.7",
+    "@vitejs/plugin-react": "^6.1.1",
+    "msw": "^3.0.3",
+    "openapi-typescript": "^7.13.0",
+    "oxlint": "^1.81.0",
+    "typescript": "~5.9.3",
+    "vite": "^8.3.0"
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
+    ]
+  }
+}

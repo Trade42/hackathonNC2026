@@ -1,0 +1,64 @@
+[
+  {
+    "id": "cir_hinton4",
+    "name": "Hinton James 4th floor",
+    "emoji": "🌊",
+    "members": [
+      {
+        "id": "usr_judge",
+        "display_name": "Jordan",
+        "avatar_seed": "judge",
+        "bubble_color": "#2563EB"
+      },
+      {
+        "id": "usr_maya",
+        "display_name": "Maya",
+        "avatar_seed": "maya",
+        "bubble_color": "#F97316"
+      },
+      {
+        "id": "usr_dana",
+        "display_name": "Dana",
+        "avatar_seed": "dana",
+        "bubble_color": "#10B981"
+      },
+      {
+        "id": "usr_leo",
+        "display_name": "Leo",
+        "avatar_seed": "leo",
+        "bubble_color": "#8B5CF6"
+      }
+    ],
+    "last_met_at": "2026-10-03T23:30:00Z",
+    "last_active_at": "2026-10-10T21:45:00Z",
+    "stats": {
+      "runs": 12,
+      "co2_saved_g": 5760
+    }
+  },
+  {
+    "id": "cir_climb",
+    "name": "Climbing crew",
+    "emoji": "🧗",
+    "members": [
+      {
+        "id": "usr_maya",
+        "display_name": "Maya",
+        "avatar_seed": "maya",
+        "bubble_color": "#F97316"
+      },
+      {
+        "id": "usr_leo",
+        "display_name": "Leo",
+        "avatar_seed": "leo",
+        "bubble_color": "#8B5CF6"
+      }
+    ],
+    "last_met_at": "2026-10-08T00:30:00Z",
+    "last_active_at": "2026-10-08T01:10:00Z",
+    "stats": {
+      "runs": 3,
+      "co2_saved_g": 1440
+    }
+  }
+]

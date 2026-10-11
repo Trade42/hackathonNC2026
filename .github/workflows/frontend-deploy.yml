@@ -1,0 +1,97 @@
+# Deploys the website (frontend/) to Vercel production, ferrygo.tech, on every
+# push to main that touches frontend/, and again after the Android build so the
+# site serves the newest ferry.apk at /downloads/ferry.apk.
+#
+# The repo belongs to a personal account, so Vercel's own GitHub integration
+# can't import it for a collaborator. This workflow deploys with the Vercel CLI
+# instead. It needs one repository secret, VERCEL_TOKEN (a Vercel access token
+# for the project's owner); until that is set, the job skips with a notice.
+name: frontend-deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/frontend-deploy.yml'
+  workflow_run:
+    workflows: [frontend-android]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  VERCEL_ORG_ID: team_MlsZPYP4Y9AP9sBMEEsHRpg6
+  VERCEL_PROJECT_ID: prj_KDxhCc6RCjeOAiQl59Q6yVFtnUKG
+  VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+  VERCEL_CLI: vercel@63.1.2
+
+jobs:
+  deploy:
+    # After the Android build, deploy only when it published a new APK.
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    # On the job, not the workflow: a skipped run (after a cancelled Android
+    # build) must not take the slot and cancel a real deploy.
+    concurrency:
+      group: frontend-deploy
+      cancel-in-progress: true
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Check for the Vercel token
+        id: token
+        working-directory: .
+        run: |
+          if [ -z "$VERCEL_TOKEN" ]; then
+            echo "::notice::VERCEL_TOKEN is not set, so nothing was deployed. Add it under Settings, Secrets and variables, Actions."
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.token.outputs.ok == 'true'
+
+      - uses: actions/setup-node@v4
+        if: steps.token.outputs.ok == 'true'
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      # public/downloads/ is gitignored; the APK comes from the Android workflow's release.
+      - name: Fetch the latest Android APK
+        if: steps.token.outputs.ok == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p public/downloads
+          gh release download android-latest --repo "$GITHUB_REPOSITORY" --pattern ferry.apk --dir public/downloads --clobber \
+            || echo "::warning::No ferry.apk on the android-latest release; /downloads/ferry.apk will 404."
+
+      - name: Pull the Vercel project settings
+        if: steps.token.outputs.ok == 'true'
+        run: npx --yes "$VERCEL_CLI" pull --yes --environment=production --token="$VERCEL_TOKEN"
+
+      - name: Build
+        if: steps.token.outputs.ok == 'true'
+        run: npx --yes "$VERCEL_CLI" build --prod --token="$VERCEL_TOKEN"
+
+      # Vercel's Hobby plan blocks a deployment whose git commit author isn't on the
+      # Vercel team, so a teammate's commits never went live. Deploy the prebuilt
+      # output from a folder with no git metadata; it deploys as the token's owner.
+      - name: Deploy to production
+        if: steps.token.outputs.ok == 'true'
+        run: |
+          out="$RUNNER_TEMP/vercel-deploy"
+          rm -rf "$out" && mkdir -p "$out/.vercel"
+          cp -R .vercel/output "$out/.vercel/output"
+          cp .vercel/project.json "$out/.vercel/project.json"
+          cd "$out"
+          npx --yes "$VERCEL_CLI" deploy --prebuilt --prod --token="$VERCEL_TOKEN"

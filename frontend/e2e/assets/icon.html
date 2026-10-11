@@ -1,0 +1,14 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+*{margin:0}
+body{width:512px;height:512px;overflow:hidden;position:relative;background:linear-gradient(180deg,#ffffff 0%,#e3f3fd 34%,#a9daf6 62%,#7cc5f0 100%)}
+.sea{position:absolute;left:0;right:0;bottom:0;height:150px;background:linear-gradient(180deg,#8fe0ef 0%,#3fbbdc 30%,#1593c6 100%)}
+.hill{position:absolute;left:-90px;bottom:-130px;width:520px;height:290px;border-radius:50%;background:radial-gradient(ellipse at 40% 18%,#d7f58e 0%,#86cf42 38%,#3f9a26 100%)}
+.cloud{position:absolute;border-radius:50%;background:radial-gradient(circle at 40% 30%,#fff 0 55%,#dfeaf5 100%)}
+svg{position:absolute;left:66px;top:46px;width:380px;height:380px;filter:drop-shadow(0 22px 30px rgba(8,70,110,.35))}
+</style></head><body>
+<div class="cloud" style="left:-30px;top:270px;width:150px;height:90px"></div>
+<div class="cloud" style="left:40px;top:245px;width:120px;height:100px"></div>
+<div class="cloud" style="right:-40px;top:280px;width:180px;height:90px"></div>
+<div class="sea"></div><div class="hill"></div>
+<svg viewBox="0 0 100 100"><defs><linearGradient id="o" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fd6ff"/><stop offset=".55" stop-color="#1e8fd6"/><stop offset="1" stop-color="#0a5e93"/></linearGradient><linearGradient id="c" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".9"/><stop offset="1" stop-color="#fff" stop-opacity=".05"/></linearGradient></defs><circle cx="50" cy="50" r="47" fill="url(#o)" stroke="#fff" stroke-width="2.5"/><ellipse cx="38" cy="22" rx="20" ry="9" fill="url(#c)" transform="rotate(-18 38 22)"/><g stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".7"><line x1="17" y1="44" x2="27" y2="44"/><line x1="13" y1="54" x2="25" y2="54"/><line x1="17" y1="64" x2="26" y2="64"/></g><g stroke="#fff" stroke-width="5.5" stroke-linecap="round" fill="none"><circle cx="58" cy="22" r="7" fill="#fff" stroke="none"/><line x1="55" y1="31" x2="48" y2="57"/><g transform="rotate(30 48 57)"><line x1="48" y1="57" x2="46" y2="72"/><g transform="rotate(-10 46 72)"><line x1="46" y1="72" x2="44" y2="88"/></g></g><g transform="rotate(-26 48 57)"><line x1="48" y1="57" x2="46" y2="72"/><g transform="rotate(-62 46 72)"><line x1="46" y1="72" x2="44" y2="88"/></g></g><g transform="rotate(38 54 37)"><line x1="54" y1="37" x2="50" y2="47"/><line x1="50" y1="47" x2="58" y2="53"/></g><g transform="rotate(-34 54 37)"><line x1="54" y1="37" x2="50" y2="47"/><line x1="50" y1="47" x2="58" y2="53"/><path d="M57 52 h9 l-1 10 h-7 z" fill="#ffd89a" stroke="none"/><path d="M59.5 52 q2.5 -4 5 0" stroke="#ffd89a" stroke-width="1.6"/></g></g></svg>
+</body></html>
